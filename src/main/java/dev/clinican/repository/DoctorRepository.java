@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
 
-    List<Doctor> findByNameContainingIgnoreCase(String name);
+    List<Doctor> findByDoctorNameContainingIgnoreCase(String name);
+    List<Doctor> findByCrmContainingIgnoreCase(String crm);
 }
