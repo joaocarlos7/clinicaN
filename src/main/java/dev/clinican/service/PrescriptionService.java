@@ -2,14 +2,12 @@ package dev.clinican.service;
 
 
 import dev.clinican.dto.PrescriptionDto;
-import dev.clinican.dto.TbUserDto;
-import dev.clinican.dto.TbUserLoginDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.Prescription;
-import dev.clinican.entity.TbUser;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.PrescriptionRepository;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,8 +51,8 @@ public class PrescriptionService {
 
 
     // Public Methods
-    public PrescriptionDto create(PrescriptionDto user) {
-        return toDto(prescriptionRepository.save(toEntity(user)));
+    public PrescriptionDto create(PrescriptionDto prescriptionDto) {
+        return toDto(prescriptionRepository.save(toEntity(prescriptionDto)));
     }
     public PrescriptionDto update(UUID id, PrescriptionDto prescriptionDto) {
         Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())
