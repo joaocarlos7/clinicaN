@@ -1,7 +1,6 @@
 package dev.clinican.service;
 
 import dev.clinican.dto.ConsultationDto;
-import dev.clinican.dto.PrescriptionDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
@@ -10,7 +9,6 @@ import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 

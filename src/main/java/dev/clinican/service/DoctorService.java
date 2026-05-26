@@ -76,7 +76,6 @@ public class DoctorService {
     public void delete(UUID id) {
         doctorRepository.deleteById(id);
     }
-
     public List<DoctorDto> findByDoctorName(String name) {
         return doctorRepository
                 .findByDoctorNameContainingIgnoreCase(name)
@@ -91,11 +90,6 @@ public class DoctorService {
                 .map(this::toDto)
                 .toList();
     }
-
-
-
-
-
 
 
 

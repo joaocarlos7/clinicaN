@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record PatientDto(
         UUID id,
-        TbUser user,
+        UUID userId,
         String cpf,
         LocalDateTime bornDay,
         String phoneNumber,
