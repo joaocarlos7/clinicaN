@@ -67,6 +67,7 @@ public class PrescriptionMedicineService {
 
 
     // Public Methods
+
     public PrescriptionMedicineDto create(PrescriptionMedicineDto prescriptionMedicineDto) {
         return toDto(prescriptionMedicineRepository.save(toEntity(prescriptionMedicineDto)));
     }
@@ -96,5 +97,6 @@ public class PrescriptionMedicineService {
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
+
 
 }
