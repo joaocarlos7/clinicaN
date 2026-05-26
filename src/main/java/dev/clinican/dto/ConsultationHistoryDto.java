@@ -12,5 +12,7 @@ public record ConsultationHistoryDto(
         StatusType statusBefore,
         StatusType statusNew,
         LocalDateTime changedAt,
-        TbUser changedBy) {
+        UUID changedById) {
 }
+
+

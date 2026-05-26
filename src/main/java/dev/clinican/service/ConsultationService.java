@@ -67,7 +67,10 @@ public class ConsultationService {
 
     // Public Methods
     public ConsultationDto create(ConsultationDto consultationDto) {
+
         return toDto(consultationRepository.save(toEntity(consultationDto)));
+
+
     }
     public ConsultationDto update(UUID id, ConsultationDto consultationDto) {
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
