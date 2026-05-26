@@ -16,10 +16,12 @@ import java.util.UUID;
 
 public class ConsultationService {
 
+
     private final ConsultationRepository consultationRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
 
+    // Injection
     public ConsultationService(ConsultationRepository consultationRepository,
                                DoctorRepository doctorRepository,
                                PatientRepository patientRepository) {
@@ -31,7 +33,7 @@ public class ConsultationService {
 
 
 
-    // DTO to Entity (Entry)
+    // # DTO to Entity (Entry)
     private Consultation toEntity(ConsultationDto consultationDto) {
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
@@ -64,14 +66,17 @@ public class ConsultationService {
         );
     }
 
+    // # Public Methods
 
-    // Public Methods
+
+    // # Create
     public ConsultationDto create(ConsultationDto consultationDto) {
 
         return toDto(consultationRepository.save(toEntity(consultationDto)));
 
-
     }
+
+    // # Update
     public ConsultationDto update(UUID id, ConsultationDto consultationDto) {
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
@@ -91,19 +96,22 @@ public class ConsultationService {
 
         return toDto(consultationRepository.save(consultation));
 
-
-
-
     }
+
+    // # Delete
     public void delete(UUID id) {
         consultationRepository.deleteById(id);
     }
+
+    // # List By Observation
     public List<ConsultationDto> findByObservation(String observation) {
         return consultationRepository.findByObservationContainingIgnoreCase(observation)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
     }
+
+    // # List by Doctor Name
     public List<ConsultationDto> findByDoctorName(String name) {
         return consultationRepository
                 .findByDoctorNameContainingIgnoreCase(name)
@@ -111,6 +119,8 @@ public class ConsultationService {
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
     }
+
+    // # List by Patient Name
     public List<ConsultationDto> findByPatientName(String name) {
         return consultationRepository
                 .findByPatientNameContainingIgnoreCase(name)
@@ -118,6 +128,5 @@ public class ConsultationService {
                 .map(this::toDto)
                 .toList();
     }
-
 
 }
