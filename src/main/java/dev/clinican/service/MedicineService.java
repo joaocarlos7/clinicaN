@@ -2,6 +2,7 @@ package dev.clinican.service;
 
 
 import dev.clinican.dto.MedicineDto;
+import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Medicine;
 import dev.clinican.repository.MedicineRepository;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,10 @@ public class MedicineService {
 
     // Public Methods
     public MedicineDto create(MedicineDto medicineDto) {
-        return toDto(medicineRepository.save(toEntity(medicineDto)));
+        Medicine medicine = toEntity(medicineDto);
+        Medicine saveMedicine = medicineRepository.save(medicine);
+
+        return toDto(saveMedicine);
     }
     public MedicineDto update(UUID id, MedicineDto medicineDto) {
         Medicine medicine = medicineRepository.findById(id)

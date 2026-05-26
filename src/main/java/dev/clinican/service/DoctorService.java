@@ -51,7 +51,11 @@ public class DoctorService {
     }
 
     public DoctorDto create(DoctorDto doctorDto) {
-        return toDto(doctorRepository.save(toEntity(doctorDto)));
+
+        Doctor doctor = toEntity(doctorDto);
+        Doctor saveDoctor = doctorRepository.save(doctor);
+
+        return toDto(saveDoctor);
     }
     public DoctorDto update(UUID id, DoctorDto doctorDto) {
         TbUser user = tbUserRepository.findById(doctorDto.userId())

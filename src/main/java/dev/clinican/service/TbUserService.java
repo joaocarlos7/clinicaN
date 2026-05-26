@@ -3,6 +3,7 @@ package dev.clinican.service;
 
 import dev.clinican.dto.TbUserDto;
 import dev.clinican.dto.TbUserLoginDto;
+import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,10 @@ public class TbUserService {
 
     // Public Methods
     public TbUserDto create(TbUserLoginDto user) {
-        return toDto(tbUserRepository.save(toEntity(user)));
+        TbUser tbUser = toEntity(user);
+        TbUser saveTbUser = tbUserRepository.save(tbUser);
+
+        return toDto(saveTbUser);
     }
     public TbUserDto update(UUID id, TbUserLoginDto user) {
         TbUser tbUser = tbUserRepository.findById(id).

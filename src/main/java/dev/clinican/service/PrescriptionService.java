@@ -3,6 +3,7 @@ package dev.clinican.service;
 
 import dev.clinican.dto.PrescriptionDto;
 import dev.clinican.entity.Consultation;
+import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Prescription;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.PrescriptionRepository;
@@ -52,7 +53,10 @@ public class PrescriptionService {
 
     // Public Methods
     public PrescriptionDto create(PrescriptionDto prescriptionDto) {
-        return toDto(prescriptionRepository.save(toEntity(prescriptionDto)));
+        Prescription prescription = toEntity(prescriptionDto);
+        Prescription savePrescription = prescriptionRepository.save(prescription);
+
+        return toDto(savePrescription);
     }
     public PrescriptionDto update(UUID id, PrescriptionDto prescriptionDto) {
         Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())

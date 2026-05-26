@@ -3,6 +3,7 @@ package dev.clinican.service;
 
 import dev.clinican.dto.DoctorDto;
 import dev.clinican.dto.PatientDto;
+import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.repository.PatientRepository;
@@ -52,7 +53,10 @@ public class PatientService {
 
 
     public PatientDto create(PatientDto patientDto) {
-        return toDto(patientRepository.save(toEntity(patientDto)));
+        Patient patient = toEntity(patientDto);
+        Patient savePatient = patientRepository.save(patient);
+
+        return toDto(savePatient);
     }
     public PatientDto update(UUID id, PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())

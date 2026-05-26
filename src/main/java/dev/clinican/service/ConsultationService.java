@@ -4,6 +4,7 @@ import dev.clinican.dto.ConsultationDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
+import dev.clinican.entity.enums.StatusType;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
@@ -20,20 +21,23 @@ public class ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final ConsultationHistoryService consultationHistoryService;
 
     // Injection
     public ConsultationService(ConsultationRepository consultationRepository,
                                DoctorRepository doctorRepository,
-                               PatientRepository patientRepository) {
+                               PatientRepository patientRepository,
+                               ConsultationHistoryService consultationHistoryService) {
         this.consultationRepository = consultationRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.consultationHistoryService = consultationHistoryService;
     }
 
 
 
 
-    // # DTO to Entity (Entry)
+    //  DTO to Entity (Entry)
     private Consultation toEntity(ConsultationDto consultationDto) {
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
@@ -69,15 +73,26 @@ public class ConsultationService {
     // # Public Methods
 
 
-    // # Create
+    // Create
     public ConsultationDto create(ConsultationDto consultationDto) {
 
-        return toDto(consultationRepository.save(toEntity(consultationDto)));
+        Consultation consultation = toEntity(consultationDto);
+        Consultation savedConsultation = consultationRepository.save(consultation);
+
+        consultationHistoryService.recordChange(
+                savedConsultation,
+                null,
+                savedConsultation.getConsultationStatus(),
+                savedConsultation.getCreatedBy()
+        );
+
+        return toDto(savedConsultation);
 
     }
 
-    // # Update
+    //  Update
     public ConsultationDto update(UUID id, ConsultationDto consultationDto) {
+
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
         Patient patient = patientRepository.findById(consultationDto.patientId())
@@ -85,6 +100,8 @@ public class ConsultationService {
 
         Consultation consultation = consultationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consultation not found" + consultationDto.id()));
+        StatusType oldStatus = consultation.getConsultationStatus();
+
         consultation.setDoctor(doctor);
         consultation.setPatient(patient);
         consultation.setConsultationDate(consultationDto.consultationDate());
@@ -94,11 +111,17 @@ public class ConsultationService {
         consultation.setCreatedBy(consultationDto.createdBy());
 
 
-        return toDto(consultationRepository.save(consultation));
-
+        Consultation savedConsultation = consultationRepository.save(consultation);
+        consultationHistoryService.recordChange(
+                savedConsultation,
+                oldStatus,
+                savedConsultation.getConsultationStatus(),
+                savedConsultation.getCreatedBy()
+        );
+        return toDto(savedConsultation);
     }
 
-    // # Delete
+    //  Delete
     public void delete(UUID id) {
         consultationRepository.deleteById(id);
     }
@@ -111,7 +134,7 @@ public class ConsultationService {
                 .toList(); // List
     }
 
-    // # List by Doctor Name
+    //  List by Doctor Name
     public List<ConsultationDto> findByDoctorName(String name) {
         return consultationRepository
                 .findByDoctorNameContainingIgnoreCase(name)
@@ -120,7 +143,7 @@ public class ConsultationService {
                 .toList(); // List
     }
 
-    // # List by Patient Name
+    //  List by Patient Name
     public List<ConsultationDto> findByPatientName(String name) {
         return consultationRepository
                 .findByPatientNameContainingIgnoreCase(name)
