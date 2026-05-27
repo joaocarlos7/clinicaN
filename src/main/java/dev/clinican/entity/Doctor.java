@@ -31,11 +31,7 @@ public class Doctor {
     private Long crm;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private String speciality;
-
 
     @Column(name = "phone_number", nullable = false)
     private Long phoneNumber;

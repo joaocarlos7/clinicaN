@@ -28,6 +28,7 @@ public class PrescriptionService {
 
 
     // Conversion Methods
+
     // DTO to Entity (Entry)
     private Prescription toEntity(PrescriptionDto prescriptionDto) {
         Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())
@@ -40,6 +41,7 @@ public class PrescriptionService {
 
         return prescription;
     }
+
     // Entity to DTO (Exit)
     private PrescriptionDto toDto(Prescription prescription) {
         return new PrescriptionDto(
@@ -49,15 +51,17 @@ public class PrescriptionService {
                 prescription.getObservation());
     }
 
-
-
     // Public Methods
+
+    // Create
     public PrescriptionDto create(PrescriptionDto prescriptionDto) {
         Prescription prescription = toEntity(prescriptionDto);
         Prescription savePrescription = prescriptionRepository.save(prescription);
 
         return toDto(savePrescription);
     }
+
+    // Update
     public PrescriptionDto update(UUID id, PrescriptionDto prescriptionDto) {
         Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())
                 .orElseThrow(() -> new RuntimeException("Consultation not found" + prescriptionDto.consultationID()));
@@ -71,20 +75,28 @@ public class PrescriptionService {
         return toDto(prescriptionRepository.save(toEntity(prescriptionDto)));
 
     }
+
+    // Delete
     public void delete(UUID id) {
         prescriptionRepository.deleteById(id);
     }
+
+    // Find by ID
     public PrescriptionDto findById(UUID id) {
         return prescriptionRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
+
+    // Find by Observation
     public List<PrescriptionDto> findByObservation(String observation) {
         return prescriptionRepository.findByObservationContainingIgnoreCase(observation)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
     }
+
+    // Find by created date
     public List<PrescriptionDto> findByCreatedAt(LocalDateTime localDate) {
         return prescriptionRepository.findByCreatedAtContainingIgnoreCase(localDate)
                 .stream() // Take the list one by one

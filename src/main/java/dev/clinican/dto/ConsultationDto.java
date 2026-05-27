@@ -1,7 +1,5 @@
 package dev.clinican.dto;
 
-import dev.clinican.entity.Doctor;
-import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.StatusType;
 

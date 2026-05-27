@@ -13,5 +13,4 @@ public interface PatientRepository extends JpaRepository<Patient, UUID> {
     List<Patient> findByCpfContainingIgnoreCase(String cpf);
 
 
-
 }

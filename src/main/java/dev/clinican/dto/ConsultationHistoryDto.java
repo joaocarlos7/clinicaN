@@ -1,6 +1,5 @@
 package dev.clinican.dto;
 
-import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.StatusType;
 
 import java.time.LocalDateTime;

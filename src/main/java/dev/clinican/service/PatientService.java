@@ -25,7 +25,9 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
+    // Convert Methods
 
+    // DTO to Entity (Entry)
     private Patient toEntity(PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())
                 .orElseThrow(()-> new RuntimeException("User not found"));
@@ -40,6 +42,8 @@ public class PatientService {
 
         return patient;
     }
+
+    // Entity to DTO (Exit)
     private PatientDto toDto(Patient patient) {
         return new PatientDto(
                 patient.getId(),
@@ -51,13 +55,17 @@ public class PatientService {
         );
     }
 
+    // Public Methods
 
+    // Create
     public PatientDto create(PatientDto patientDto) {
         Patient patient = toEntity(patientDto);
         Patient savePatient = patientRepository.save(patient);
 
         return toDto(savePatient);
     }
+
+    // Update
     public PatientDto update(UUID id, PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())
                 .orElseThrow(()-> new RuntimeException("User not found"));
@@ -77,9 +85,13 @@ public class PatientService {
 
 
     }
+
+    // Delete
     public void delete(UUID id) {
         patientRepository.deleteById(id);
     }
+
+    // Find by Name
     public List<PatientDto> findByName(String name) {
         return patientRepository
                 .findByNameContainingIgnoreCase(name)
@@ -87,6 +99,8 @@ public class PatientService {
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
     }
+
+    // Find by CPF
     public List<PatientDto> findByCpf(String cpf) {
         return patientRepository
                 .findByCpfContainingIgnoreCase(cpf)

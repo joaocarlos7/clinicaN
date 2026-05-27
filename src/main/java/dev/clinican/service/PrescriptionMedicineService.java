@@ -31,6 +31,7 @@ public class PrescriptionMedicineService {
 
 
     // Conversion Methods
+
     // DTO to Entity
     private PrescriptionMedicine toEntity(PrescriptionMedicineDto prescriptionMedicineDto) {
         Prescription prescription = prescriptionRepository.findById(prescriptionMedicineDto.prescriptionId())
@@ -49,6 +50,7 @@ public class PrescriptionMedicineService {
 
         return prescriptionMedicine;
     }
+
     // Entity to DTO
     private PrescriptionMedicineDto toDto(PrescriptionMedicine prescriptionMedicine) {
         return new PrescriptionMedicineDto(
@@ -65,12 +67,15 @@ public class PrescriptionMedicineService {
 
     // Public Methods
 
+    // Create
     public PrescriptionMedicineDto create(PrescriptionMedicineDto prescriptionMedicineDto) {
         PrescriptionMedicine prescriptionMedicine = toEntity(prescriptionMedicineDto);
         PrescriptionMedicine savePrescriptionMedicine = prescriptionMedicineRepository.save(prescriptionMedicine);
 
         return toDto(savePrescriptionMedicine);
     }
+
+    // Update
     public PrescriptionMedicineDto update(UUID id, PrescriptionMedicineDto prescriptionMedicineDto) {
         Medicine medicine = medicineRepository.findById(prescriptionMedicineDto.medicineId())
                 .orElseThrow(() -> new RuntimeException("Consultation not found" + prescriptionMedicineDto.medicineId()));
@@ -89,14 +94,20 @@ public class PrescriptionMedicineService {
         return toDto(prescriptionMedicineRepository.save(toEntity(prescriptionMedicineDto)));
 
     }
+
+    // Delete
     public void delete(UUID id) {
         prescriptionMedicineRepository.deleteById(id);
     }
+
+    // Find by ID
     public PrescriptionMedicineDto findById(UUID id) {
         return prescriptionMedicineRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
+
+
 
 
 }

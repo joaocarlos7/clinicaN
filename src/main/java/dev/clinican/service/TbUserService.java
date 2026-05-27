@@ -3,7 +3,6 @@ package dev.clinican.service;
 
 import dev.clinican.dto.TbUserDto;
 import dev.clinican.dto.TbUserLoginDto;
-import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ public class TbUserService {
         this.tbUserRepository = repository;
     }
 
+    // Convert Methods
     // Entity to DTO (Exit)
     private TbUserDto toDto(TbUser user) {
         return new TbUserDto(user.getId(),
@@ -46,12 +46,16 @@ public class TbUserService {
 
 
     // Public Methods
+
+    // Create
     public TbUserDto create(TbUserLoginDto user) {
         TbUser tbUser = toEntity(user);
         TbUser saveTbUser = tbUserRepository.save(tbUser);
 
         return toDto(saveTbUser);
     }
+
+    // Update
     public TbUserDto update(UUID id, TbUserLoginDto user) {
         TbUser tbUser = tbUserRepository.findById(id).
                 orElseThrow(()-> new RuntimeException("User not found" + id));
@@ -65,14 +69,20 @@ public class TbUserService {
         return toDto(tbUserRepository.save(tbUser));
 
     }
+
+    // Delete
     public void delete(UUID id) {
         tbUserRepository.deleteById(id);
     }
+
+    // Find by Id
     public TbUserDto findById(UUID id) {
         return tbUserRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
+
+    // Find by Name
     public List<TbUserDto> findByName(String name) {
         return tbUserRepository.findByNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one

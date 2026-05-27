@@ -6,7 +6,6 @@ import dev.clinican.entity.ConsultationHistory;
 import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.StatusType;
 import dev.clinican.repository.ConsultationHistoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +39,7 @@ public class ConsultationHistoryService {
         return consultationHistoryRepository.save(history);
     }
 
+    // ConsultationByID
     public List<ConsultationHistory> findByConsultationId(UUID consultationId) {
         return consultationHistoryRepository.findByConsultationId(consultationId);
     }

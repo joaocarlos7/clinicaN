@@ -1,6 +1,5 @@
 package dev.clinican.dto;
 
-import dev.clinican.entity.TbUser;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -34,6 +34,7 @@ public class MedicineService {
         return medicine;
 
     }
+
     // Entity to DTO
     private MedicineDto toDto(Medicine medicine) {
         return new MedicineDto(
@@ -47,12 +48,15 @@ public class MedicineService {
 
 
     // Public Methods
+    // Create
     public MedicineDto create(MedicineDto medicineDto) {
         Medicine medicine = toEntity(medicineDto);
         Medicine saveMedicine = medicineRepository.save(medicine);
 
         return toDto(saveMedicine);
     }
+
+    // Update
     public MedicineDto update(UUID id, MedicineDto medicineDto) {
         Medicine medicine = medicineRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Medicine not found" + medicineDto.id()));
@@ -66,15 +70,21 @@ public class MedicineService {
 
 
     }
+
+    // Delete
     public void delete(UUID id) {
         medicineRepository.deleteById(id);
     }
+
+    // Find By ID
     public MedicineDto findById(UUID id) {
 
         return medicineRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("Medicine not found" + id));
     }
+
+    // Find by Name
     public List<MedicineDto> findByName(String name) {
 
         return medicineRepository.findByNameContainingIgnoreCase(name)

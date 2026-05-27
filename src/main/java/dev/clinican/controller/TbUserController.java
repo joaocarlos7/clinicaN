@@ -3,7 +3,6 @@ package dev.clinican.controller;
 import dev.clinican.dto.TbUserDto;
 import dev.clinican.dto.TbUserLoginDto;
 import dev.clinican.service.TbUserService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,32 +18,33 @@ public class TbUserController {
         this.tbUserService = tbUserService;
     }
 
-
-    @GetMapping("{id}")
+    // Find By ID
+    @GetMapping("/{id}")
     TbUserDto getUserById(@PathVariable UUID id){
         return tbUserService.findById(id);
     }
 
+    // Find by Name
     @GetMapping
     public List<TbUserDto> findByName(@RequestParam String name){
         return tbUserService.findByName(name);
     }
 
+    // Create
     @PostMapping
     TbUserDto create(@RequestBody TbUserLoginDto user) {
         return tbUserService.create(user);
     }
 
-    @PutMapping
+    // Update
+    @PutMapping("/{id}")
     TbUserDto update(@PathVariable UUID id, @RequestBody TbUserLoginDto user) {
         return tbUserService.update(id, user);
     }
 
+    // Delete
     @DeleteMapping("{id}")
     void delete(@PathVariable UUID id) {
         tbUserService.delete(id);
     }
-
-
-
 }

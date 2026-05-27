@@ -70,8 +70,7 @@ public class ConsultationService {
         );
     }
 
-    // # Public Methods
-
+    // Public Methods
 
     // Create
     public ConsultationDto create(ConsultationDto consultationDto) {
@@ -126,7 +125,14 @@ public class ConsultationService {
         consultationRepository.deleteById(id);
     }
 
-    // # List By Observation
+    // List By ID
+    public ConsultationDto findById(UUID id) {
+        return consultationRepository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new RuntimeException("Consultation not found" + id));
+    }
+
+    //  List By Observation
     public List<ConsultationDto> findByObservation(String observation) {
         return consultationRepository.findByObservationContainingIgnoreCase(observation)
                 .stream() // Take the list one by one

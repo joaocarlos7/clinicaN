@@ -25,6 +25,9 @@ public class DoctorService {
         this.tbUserRepository = tbUserRepository;
     }
 
+    // Convert Methods
+
+        // DTO to Entity (Entry)
     private Doctor toEntity(DoctorDto doctorDto) {
         TbUser user = tbUserRepository.findById(doctorDto.userId())
                 .orElseThrow(()-> new RuntimeException("User not found"));
@@ -32,24 +35,27 @@ public class DoctorService {
 
         Doctor doctor = new Doctor();
         doctor.setUser(user);
-        doctor.setName(doctorDto.name());
         doctor.setCrm(doctorDto.crm());
         doctor.setSpeciality(doctorDto.speciality());
         doctor.setPhoneNumber(doctorDto.phoneNumber());
 
         return doctor;
         }
+
+        // Entity To DTO (Exit)
     private DoctorDto toDto(Doctor doctor) {
         return new DoctorDto(
                 doctor.getId(),
                 doctor.getUser().getId(),
                 doctor.getCrm(),
-                doctor.getName(),
                 doctor.getSpeciality(),
                 doctor.getPhoneNumber()
         );
     }
 
+
+    // Public Methods
+    // Create
     public DoctorDto create(DoctorDto doctorDto) {
 
         Doctor doctor = toEntity(doctorDto);
@@ -57,6 +63,8 @@ public class DoctorService {
 
         return toDto(saveDoctor);
     }
+
+    // Update
     public DoctorDto update(UUID id, DoctorDto doctorDto) {
         TbUser user = tbUserRepository.findById(doctorDto.userId())
                 .orElseThrow(()-> new RuntimeException("User not found"));
@@ -64,7 +72,6 @@ public class DoctorService {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consultation not found" + doctorDto.id()));
         doctor.setUser(user);
-        doctor.setName(doctorDto.name());
         doctor.setCrm(doctorDto.crm());
         doctor.setSpeciality(doctorDto.speciality());
         doctor.setPhoneNumber(doctorDto.phoneNumber());
@@ -77,9 +84,13 @@ public class DoctorService {
 
 
     }
+
+    // Delete
     public void delete(UUID id) {
         doctorRepository.deleteById(id);
     }
+
+    // List By Doctor Name
     public List<DoctorDto> findByDoctorName(String name) {
         return doctorRepository
                 .findByDoctorNameContainingIgnoreCase(name)
@@ -87,6 +98,8 @@ public class DoctorService {
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
     }
+
+    // List By Doctor CRM
     public List<DoctorDto> findByCrm(String crm) {
         return doctorRepository
                 .findByCrmContainingIgnoreCase(crm)
