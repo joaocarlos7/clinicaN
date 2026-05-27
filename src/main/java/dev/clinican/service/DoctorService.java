@@ -55,6 +55,7 @@ public class DoctorService {
 
 
     // Public Methods
+
     // Create
     public DoctorDto create(DoctorDto doctorDto) {
 
@@ -90,6 +91,12 @@ public class DoctorService {
         doctorRepository.deleteById(id);
     }
 
+    // List By Doctor Id
+    public DoctorDto findById(UUID id) {
+        return doctorRepository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new RuntimeException("Doctor not found" + id));
+    }
     // List By Doctor Name
     public List<DoctorDto> findByDoctorName(String name) {
         return doctorRepository
@@ -100,15 +107,13 @@ public class DoctorService {
     }
 
     // List By Doctor CRM
-    public List<DoctorDto> findByCrm(String crm) {
-        return doctorRepository
-                .findByCrmContainingIgnoreCase(crm)
+    public DoctorDto findByCrm(String crm) {
+        return doctorRepository.findByCrmContainingIgnoreCase(crm)
                 .stream()
                 .map(this::toDto)
-                .toList();
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("CRM not found" + crm));
     }
-
-
 
 
 }

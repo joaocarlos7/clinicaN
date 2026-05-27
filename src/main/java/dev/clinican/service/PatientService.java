@@ -91,7 +91,14 @@ public class PatientService {
         patientRepository.deleteById(id);
     }
 
-    // Find by Name
+    // Find by ID
+    public PatientDto findById(UUID id) {
+        return patientRepository.findById(id)
+                .map(this:: toDto)
+                .orElseThrow(()-> new RuntimeException("Patient not found" + id));
+    }
+
+    // List by Name
     public List<PatientDto> findByName(String name) {
         return patientRepository
                 .findByNameContainingIgnoreCase(name)
@@ -100,7 +107,7 @@ public class PatientService {
                 .toList(); // List
     }
 
-    // Find by CPF
+    // List by CPF
     public List<PatientDto> findByCpf(String cpf) {
         return patientRepository
                 .findByCpfContainingIgnoreCase(cpf)
