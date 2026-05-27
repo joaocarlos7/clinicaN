@@ -109,11 +109,8 @@ public class DoctorService {
     // List By Doctor CRM
     public DoctorDto findByCrm(String crm) {
         return doctorRepository.findByCrmContainingIgnoreCase(crm)
-                .stream()
                 .map(this::toDto)
-                .findFirst()
                 .orElseThrow(() -> new RuntimeException("CRM not found" + crm));
     }
-
 
 }

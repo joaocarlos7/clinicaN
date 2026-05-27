@@ -19,7 +19,7 @@ public class DoctorController {
 
     // Find By ID
     @GetMapping("/{id}")
-    DoctorDto findById(UUID id) {
+    DoctorDto findById(@PathVariable UUID id) {
         return doctorService.findById(id);
     }
 

@@ -108,12 +108,11 @@ public class PatientService {
     }
 
     // List by CPF
-    public List<PatientDto> findByCpf(String cpf) {
-        return patientRepository
-                .findByCpfContainingIgnoreCase(cpf)
-                .stream()
+    public PatientDto findByCpf(String cpf) {
+        return patientRepository.findByCpfContainingIgnoreCase(cpf)
                 .map(this::toDto)
-                .toList();
+                .orElseThrow(()-> new RuntimeException("Patient not found" + cpf));
+
     }
 
 }
