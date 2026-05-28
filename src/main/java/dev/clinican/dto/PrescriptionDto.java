@@ -6,6 +6,9 @@ import java.util.UUID;
 public record PrescriptionDto(
         UUID id,
         UUID consultationID,
+        UUID medicineID,
+        UUID patientID,
+        UUID doctorID,
         LocalDateTime createdAt,
         String observation
 ) {

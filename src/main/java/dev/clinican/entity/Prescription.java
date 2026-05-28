@@ -31,6 +31,18 @@ public class Prescription {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany
+    @JoinColumn(name = "medicine", nullable = false)
+    private Medicine medicine;
+
+    @ManyToOne
+    @JoinColumn(name = "patient", nullable = false)
+    private Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor", nullable = false)
+    private Doctor doctor;
+
     private String observation;
 
 
