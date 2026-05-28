@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,10 +30,6 @@ public class Prescription {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @OneToMany
-    @JoinColumn(name = "medicine", nullable = false)
-    private Medicine medicine;
 
     @ManyToOne
     @JoinColumn(name = "patient", nullable = false)

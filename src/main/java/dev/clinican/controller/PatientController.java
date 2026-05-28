@@ -34,8 +34,8 @@ public class PatientController {
     }
 
     // Find By CPF
-    @GetMapping
-    PatientDto findByCpf(String cpf) {
+    @GetMapping("/patient/{cpf}")
+    PatientDto findByCpf(@PathVariable String cpf) {
         return patientService.findByCpf(cpf);
     }
 

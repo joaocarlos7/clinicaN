@@ -4,6 +4,7 @@ import dev.clinican.dto.DoctorDto;
 import dev.clinican.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,21 +18,20 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    // Find By ID
+    // Find
     @GetMapping("/{id}")
     DoctorDto findById(@PathVariable UUID id) {
         return doctorService.findById(id);
     }
 
     // List By Name
-    @GetMapping
-    List<DoctorDto> findByName(String name) {
+    @GetMapping()
+    List<DoctorDto> search(@RequestParam(required = false) String name) {
         return doctorService.findByDoctorName(name);
     }
 
-    // Find By CRM
-    @GetMapping
-    DoctorDto findByCrm(String crm){
+    @GetMapping("/doctor/{crm}")
+    DoctorDto findByCrm(@PathVariable String crm) {
         return doctorService.findByCrm(crm);
     }
 

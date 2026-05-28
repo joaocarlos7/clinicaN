@@ -134,7 +134,7 @@ public class ConsultationService {
 
     //  List By Observation
     public List<ConsultationDto> findByObservation(String observation) {
-        return consultationRepository.findByObservationContainingIgnoreCase(observation)
+        return consultationRepository.findByNoteContainingIgnoreCase(observation)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
@@ -143,7 +143,7 @@ public class ConsultationService {
     //  List by Doctor Name
     public List<ConsultationDto> findByDoctorName(String name) {
         return consultationRepository
-                .findByDoctorNameContainingIgnoreCase(name)
+                .findByDoctorUserNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
@@ -152,7 +152,14 @@ public class ConsultationService {
     //  List by Patient Name
     public List<ConsultationDto> findByPatientName(String name) {
         return consultationRepository
-                .findByPatientNameContainingIgnoreCase(name)
+                .findByPatientUserNameContainingIgnoreCase(name)
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    public List<ConsultationDto> findAll() {
+        return consultationRepository.findAll()
                 .stream()
                 .map(this::toDto)
                 .toList();

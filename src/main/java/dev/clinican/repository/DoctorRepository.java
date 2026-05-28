@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
 
-    List<Doctor> findByDoctorNameContainingIgnoreCase(String name);
+    List<Doctor> findByUserNameContainingIgnoreCase(String name);
     Optional<Doctor> findByCrmContainingIgnoreCase(String crm);
 }

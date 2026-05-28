@@ -26,15 +26,15 @@ public class PrescriptionController {
         return prescriptionService.findById(id);
     }
 
-    // FindByPrescription
+    // Find by Prescription / CreatedAt
     @GetMapping
-    List<PrescriptionDto> findByObservation(@RequestParam String observation) {
-        return prescriptionService.findByObservation(observation);
-    }
-
-    // FindByCreatedAt
-    List<PrescriptionDto> findByCreatedAt(@RequestParam LocalDateTime createdAt) {
-        return prescriptionService.findByCreatedAt(createdAt);
+    List<PrescriptionDto> search(
+            @RequestParam(required = false) String observation,
+            @RequestParam(required = false) LocalDateTime createdAt
+    ){
+        if(observation != null) return prescriptionService.findByObservation(observation);
+        if(createdAt != null) return prescriptionService.findByCreatedAt(createdAt);
+        return List.of();
     }
 
     // CreatePrescription

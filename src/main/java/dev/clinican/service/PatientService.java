@@ -101,7 +101,7 @@ public class PatientService {
     // List by Name
     public List<PatientDto> findByName(String name) {
         return patientRepository
-                .findByNameContainingIgnoreCase(name)
+                .findByUserNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List

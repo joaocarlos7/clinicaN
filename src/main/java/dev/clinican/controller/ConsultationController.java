@@ -1,13 +1,15 @@
 package dev.clinican.controller;
 
 import dev.clinican.dto.ConsultationDto;
-import dev.clinican.dto.PrescriptionDto;
 import dev.clinican.service.ConsultationService;
-import dev.clinican.service.PrescriptionService;
+import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/consultation")
@@ -19,28 +21,22 @@ public class ConsultationController {
         this.consultationService = consultationService;
     }
 
-    // Find By Id
+    // Find
     @GetMapping("/{id}")
-    ConsultationDto getById(@PathVariable UUID id){
+    ConsultationDto findById(@PathVariable UUID id){
         return consultationService.findById(id);
-    }
+        }
 
-    // Find by Observation
     @GetMapping
-    List<ConsultationDto> getByObservation(@RequestParam String observation){
-        return consultationService.findByObservation(observation);
-    }
-
-    // Find by Doctor Name
-    @GetMapping
-    List<ConsultationDto> getByDoctorName(@RequestParam String name){
-        return consultationService.findByDoctorName(name);
-    }
-
-    // Find by Patient Name
-    @GetMapping
-    List<ConsultationDto> getByPatientName(@RequestParam String name){
-        return consultationService.findByPatientName(name);
+    List<ConsultationDto> search(
+            @RequestParam(required = false) String doctorName,
+            @RequestParam(required = false) String patientName,
+            @RequestParam(required = false) String observation
+    ) {
+        if (doctorName != null) return consultationService.findByDoctorName(doctorName);
+        if (patientName != null) return consultationService.findByPatientName(patientName);
+        if (observation != null) return consultationService.findByObservation(observation);
+        return List.of();
     }
 
     // Create

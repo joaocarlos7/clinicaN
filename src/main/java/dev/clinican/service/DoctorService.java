@@ -97,10 +97,11 @@ public class DoctorService {
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + id));
     }
+
     // List By Doctor Name
     public List<DoctorDto> findByDoctorName(String name) {
         return doctorRepository
-                .findByDoctorNameContainingIgnoreCase(name)
+                .findByUserNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one
                 .map(this::toDto)// Convert in Dto
                 .toList(); // List
