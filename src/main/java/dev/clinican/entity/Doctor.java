@@ -34,6 +34,6 @@
         private String speciality;
 
         @Column(name = "phone_number", nullable = false)
-        private Long phoneNumber;
+        private Integer phoneNumber;
 
     }

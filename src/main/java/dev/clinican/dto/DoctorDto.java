@@ -8,6 +8,6 @@ public record DoctorDto(
         UUID userId,
         Long crm,
         String speciality,
-        Long phoneNumber
+        Integer phoneNumber
 ) {
 }

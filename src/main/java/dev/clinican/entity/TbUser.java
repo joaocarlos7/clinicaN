@@ -2,12 +2,12 @@ package dev.clinican.entity;
 
 
 import dev.clinican.entity.enums.RoleType;
-import dev.clinican.entity.enums.StatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,11 +32,13 @@ public class TbUser {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "role_type")
+    @Column(name = "role", nullable = false)
     private RoleType roleType;
 
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
 
 
 }

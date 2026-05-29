@@ -31,7 +31,7 @@ public class TbUserController {
     }
 
     // Create
-    @PostMapping
+    @PostMapping("/userCreate")
     TbUserDto create(@RequestBody TbUserLoginDto user) {
         return tbUserService.create(user);
     }

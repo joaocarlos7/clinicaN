@@ -32,7 +32,6 @@ public class PatientService {
         TbUser user = tbUserRepository.findById(patientDto.userId())
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
-
         Patient patient = new Patient();
         patient.setUser(user);
         patient.setAddress(patientDto.address());
@@ -61,7 +60,6 @@ public class PatientService {
     public PatientDto create(PatientDto patientDto) {
         Patient patient = toEntity(patientDto);
         Patient savePatient = patientRepository.save(patient);
-
         return toDto(savePatient);
     }
 
