@@ -4,9 +4,11 @@ package dev.clinican.service;
 import dev.clinican.dto.TbUserDto;
 import dev.clinican.dto.TbUserLoginDto;
 import dev.clinican.entity.TbUser;
+import dev.clinican.exception.UserAlreadyExistsException;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
 
+import javax.management.RuntimeErrorException;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,10 +51,17 @@ public class TbUserService {
 
     // Create
     public TbUserDto create(TbUserLoginDto user) {
+        if(tbUserRepository.existsByEmail(user.email())) {
+            throw new UserAlreadyExistsException(user.email());
+        } try {
+
         TbUser tbUser = toEntity(user);
         TbUser saveTbUser = tbUserRepository.save(tbUser);
+            return toDto(saveTbUser);
 
-        return toDto(saveTbUser);
+    } catch (RuntimeErrorException e) {
+        throw new UserAlreadyExistsException(user.email());
+        }
     }
 
     // Update
@@ -66,8 +75,13 @@ public class TbUserService {
         tbUser.setCreatedAt(user.createdAt());
         tbUser.setActive(user.active());
 
+        if (tbUserRepository.existsByEmail(user.email())) {
+            throw new UserAlreadyExistsException(user.email());
+        } try {
         return toDto(tbUserRepository.save(tbUser));
 
+    } catch (RuntimeErrorException e) {
+        throw new UserAlreadyExistsException(user.email());}
     }
 
     // Delete

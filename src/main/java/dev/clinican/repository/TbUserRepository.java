@@ -4,9 +4,13 @@ import dev.clinican.entity.TbUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface TbUserRepository extends JpaRepository<TbUser, UUID> {
 
     List<TbUser> findByNameContainingIgnoreCase(String name);
+    Optional<TbUser> findByEmail(String email);
+    boolean existsByEmail(String email);
+
 }

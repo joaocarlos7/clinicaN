@@ -4,7 +4,7 @@ package dev.clinican.service;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.ConsultationHistory;
 import dev.clinican.entity.TbUser;
-import dev.clinican.entity.enums.StatusType;
+import dev.clinican.entity.enums.ConsultationStatus;
 import dev.clinican.repository.ConsultationHistoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +24,8 @@ public class ConsultationHistoryService {
 
     public ConsultationHistory recordChange(
             Consultation consultation,
-            StatusType statusBefore,
-            StatusType statusNew,
+            ConsultationStatus statusBefore,
+            ConsultationStatus statusNew,
             TbUser changeBy
     ) {
         ConsultationHistory history = ConsultationHistory.builder()

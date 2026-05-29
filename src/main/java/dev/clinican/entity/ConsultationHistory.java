@@ -1,7 +1,7 @@
 package dev.clinican.entity;
 
 
-import dev.clinican.entity.enums.StatusType;
+import dev.clinican.entity.enums.ConsultationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +30,11 @@ public class ConsultationHistory {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_before", columnDefinition = "status_type")
-    private StatusType statusBefore;
+    private ConsultationStatus statusBefore;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_new", nullable = false, columnDefinition = "status_type")
-    private StatusType statusNew;
+    private ConsultationStatus statusNew;
 
     @ManyToOne
     @JoinColumn(name = "changed_by")

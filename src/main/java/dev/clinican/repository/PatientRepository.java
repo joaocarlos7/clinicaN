@@ -11,6 +11,8 @@ public interface PatientRepository extends JpaRepository<Patient, UUID> {
 
     List<Patient> findByUserNameContainingIgnoreCase(String name);
     Optional<Patient> findByCpfContainingIgnoreCase(String cpf);
+    boolean existsByCpf(String cpf);
+
 
 
 }

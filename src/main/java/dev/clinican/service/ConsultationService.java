@@ -4,10 +4,12 @@ import dev.clinican.dto.ConsultationDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
-import dev.clinican.entity.enums.StatusType;
+import dev.clinican.entity.TbUser;
+import dev.clinican.entity.enums.ConsultationStatus;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
+import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,16 +24,19 @@ public class ConsultationService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final ConsultationHistoryService consultationHistoryService;
+    private final TbUserRepository tbUserRepository;
 
     // Injection
     public ConsultationService(ConsultationRepository consultationRepository,
                                DoctorRepository doctorRepository,
                                PatientRepository patientRepository,
-                               ConsultationHistoryService consultationHistoryService) {
+                               ConsultationHistoryService consultationHistoryService,
+                               TbUserRepository tbUserRepository) {
         this.consultationRepository = consultationRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.consultationHistoryService = consultationHistoryService;
+        this.tbUserRepository = tbUserRepository;
     }
 
 
@@ -43,6 +48,8 @@ public class ConsultationService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
         Patient patient = patientRepository.findById(consultationDto.patientId())
                 .orElseThrow(() -> new RuntimeException("Patient not found" + consultationDto.patientId()));
+        TbUser tbUser = tbUserRepository.findById(consultationDto.createdBy())
+                .orElseThrow(() -> new RuntimeException("TbUser not found" + consultationDto.createdBy()));
 
         Consultation consultation = new Consultation();
         consultation.setDoctor(doctor);
@@ -51,7 +58,7 @@ public class ConsultationService {
         consultation.setConsultationStatus(consultationDto.consultationStatus());
         consultation.setReason(consultationDto.reason());
         consultation.setNote(consultationDto.note());
-        consultation.setCreatedBy(consultationDto.createdBy());
+        consultation.setCreatedBy(tbUser);
 
 
         return consultation;
@@ -66,7 +73,7 @@ public class ConsultationService {
                 consultation.getConsultationStatus(),
                 consultation.getReason(),
                 consultation.getNote(),
-                consultation.getCreatedBy()
+                consultation.getCreatedBy().getId()
         );
     }
 
@@ -99,7 +106,10 @@ public class ConsultationService {
 
         Consultation consultation = consultationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consultation not found" + consultationDto.id()));
-        StatusType oldStatus = consultation.getConsultationStatus();
+        TbUser tbUser = tbUserRepository.findById(consultationDto.createdBy())
+                .orElseThrow(() -> new RuntimeException("TbUser not found" + consultationDto.createdBy()));
+
+        ConsultationStatus oldStatus = consultation.getConsultationStatus();
 
         consultation.setDoctor(doctor);
         consultation.setPatient(patient);
@@ -107,7 +117,7 @@ public class ConsultationService {
         consultation.setReason(consultationDto.reason());
         consultation.setNote(consultationDto.note());
         consultation.setConsultationStatus(consultationDto.consultationStatus());
-        consultation.setCreatedBy(consultationDto.createdBy());
+        consultation.setCreatedBy(tbUser);
 
 
         Consultation savedConsultation = consultationRepository.save(consultation);

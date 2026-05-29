@@ -25,7 +25,7 @@ public class TbUserController {
     }
 
     // Find by Name
-    @GetMapping
+    @GetMapping("/name")
     public List<TbUserDto> findByName(@RequestParam String name){
         return tbUserService.findByName(name);
     }

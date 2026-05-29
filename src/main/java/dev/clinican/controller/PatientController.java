@@ -1,17 +1,14 @@
 package dev.clinican.controller;
 
-import dev.clinican.dto.DoctorDto;
 import dev.clinican.dto.PatientDto;
-import dev.clinican.service.DoctorService;
 import dev.clinican.service.PatientService;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.events.Event;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-
+@RequestMapping("/patient")
 public class PatientController {
 
     private final PatientService patientService;

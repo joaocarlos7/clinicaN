@@ -1,6 +1,6 @@
 package dev.clinican.entity.enums;
 
-public enum StatusType {
+public enum ConsultationStatus {
 
     SCHEDULED, COMPLETED, CANCELED
 }

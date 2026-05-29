@@ -2,14 +2,11 @@ package dev.clinican.controller;
 
 import dev.clinican.dto.ConsultationDto;
 import dev.clinican.service.ConsultationService;
-import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/consultation")

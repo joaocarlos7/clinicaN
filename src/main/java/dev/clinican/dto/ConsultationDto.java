@@ -1,7 +1,6 @@
 package dev.clinican.dto;
 
-import dev.clinican.entity.TbUser;
-import dev.clinican.entity.enums.StatusType;
+import dev.clinican.entity.enums.ConsultationStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,8 +10,8 @@ public record ConsultationDto(
         UUID doctorId,
         UUID patientId,
         LocalDateTime consultationDate,
-        StatusType consultationStatus,
+        ConsultationStatus consultationStatus,
         String reason,
         String note,
-        TbUser createdBy) {
+        UUID createdBy) {
 }

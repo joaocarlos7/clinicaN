@@ -28,7 +28,7 @@
         private TbUser user;
 
         @Column(unique = true)
-        private Long crm;
+        private Integer crm;
 
         @Column(nullable = false)
         private String speciality;

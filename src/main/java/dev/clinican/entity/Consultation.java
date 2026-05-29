@@ -1,7 +1,7 @@
 package dev.clinican.entity;
 
 
-import dev.clinican.entity.enums.StatusType;
+import dev.clinican.entity.enums.ConsultationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,8 +36,8 @@ public class Consultation {
     private LocalDateTime consultationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "status_type")
-    private StatusType consultationStatus;
+    @Column(nullable = false, columnDefinition = "consultation_status")
+    private ConsultationStatus consultationStatus;
 
     @Column(length = 500)
     private String reason;

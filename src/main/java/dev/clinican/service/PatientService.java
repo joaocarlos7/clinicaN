@@ -1,15 +1,15 @@
 package dev.clinican.service;
 
 
-import dev.clinican.dto.DoctorDto;
 import dev.clinican.dto.PatientDto;
-import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
+import dev.clinican.exception.PatientAlreadyExistsException;
 import dev.clinican.repository.PatientRepository;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
 
+import javax.management.RuntimeErrorException;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,10 +59,16 @@ public class PatientService {
     // Create
     public PatientDto create(PatientDto patientDto) {
         Patient patient = toEntity(patientDto);
-        Patient savePatient = patientRepository.save(patient);
-        return toDto(savePatient);
+        if (patientRepository.existsByCpf(patientDto.cpf())) {
+            throw new PatientAlreadyExistsException(patientDto.cpf());
+        }
+        try {
+            Patient savePatient = patientRepository.save(patient);
+            return toDto(savePatient);
+        } catch (PatientAlreadyExistsException e) {
+            throw new PatientAlreadyExistsException(patientDto.cpf());
+        }
     }
-
     // Update
     public PatientDto update(UUID id, PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())
@@ -76,12 +82,13 @@ public class PatientService {
         patient.setAddress(patientDto.address());
         patient.setPhoneNumber(patientDto.phoneNumber());
 
-
-        return toDto(patientRepository.save(patient));
-
-
-
-
+        if (patientRepository.existsByCpf(patientDto.cpf())) {
+            throw new PatientAlreadyExistsException(patientDto.cpf());
+        } try {
+            return toDto(patientRepository.save(patient));
+        } catch (PatientAlreadyExistsException e) {
+            throw new PatientAlreadyExistsException(patientDto.cpf());
+        }
     }
 
     // Delete

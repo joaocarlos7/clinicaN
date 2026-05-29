@@ -13,4 +13,5 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
     List<Consultation> findByDoctorUserNameContainingIgnoreCase(String name);
     List<Consultation> findByPatientUserNameContainingIgnoreCase(String name);
 
+
 }

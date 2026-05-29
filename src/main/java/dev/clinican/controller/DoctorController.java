@@ -31,7 +31,7 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/{crm}")
-    DoctorDto findByCrm(@PathVariable String crm) {
+    DoctorDto findByCrm(@PathVariable Integer crm) {
         return doctorService.findByCrm(crm);
     }
 
