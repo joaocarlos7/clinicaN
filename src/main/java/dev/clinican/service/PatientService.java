@@ -5,6 +5,7 @@ import dev.clinican.dto.PatientDto;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.exception.PatientAlreadyExistsException;
+import dev.clinican.mapping.PatientMapping;
 import dev.clinican.repository.PatientRepository;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
@@ -18,53 +19,28 @@ public class PatientService {
 
     private final TbUserRepository tbUserRepository;
     private final PatientRepository patientRepository;
+    private final PatientMapping patientMapping;
 
 
-    public PatientService(TbUserRepository tbUserRepository, PatientRepository patientRepository) {
+    public PatientService(TbUserRepository tbUserRepository,
+                          PatientRepository patientRepository,
+                          PatientMapping patientMapping) {
         this.tbUserRepository = tbUserRepository;
         this.patientRepository = patientRepository;
-    }
-
-    // Convert Methods
-
-    // DTO to Entity (Entry)
-    private Patient toEntity(PatientDto patientDto) {
-        TbUser user = tbUserRepository.findById(patientDto.userId())
-                .orElseThrow(()-> new RuntimeException("User not found"));
-
-        Patient patient = new Patient();
-        patient.setUser(user);
-        patient.setAddress(patientDto.address());
-        patient.setCpf(patientDto.cpf());
-        patient.setBornDay(patientDto.bornDay());
-        patient.setPhoneNumber(String.valueOf(patientDto.phoneNumber()));
-
-        return patient;
-    }
-
-    // Entity to DTO (Exit)
-    private PatientDto toDto(Patient patient) {
-        return new PatientDto(
-                patient.getId(),
-                patient.getUser().getId(),
-                patient.getCpf(),
-                patient.getBornDay(),
-                patient.getAddress(),
-                patient.getPhoneNumber()
-        );
+        this.patientMapping = patientMapping;
     }
 
     // Public Methods
 
     // Create
     public PatientDto create(PatientDto patientDto) {
-        Patient patient = toEntity(patientDto);
+        Patient patient = patientMapping.toEntity(patientDto);
         if (patientRepository.existsByCpf(patientDto.cpf())) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         }
         try {
             Patient savePatient = patientRepository.save(patient);
-            return toDto(savePatient);
+            return patientMapping.toDto(savePatient);
         } catch (PatientAlreadyExistsException e) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         }
@@ -85,7 +61,7 @@ public class PatientService {
         if (patientRepository.existsByCpf(patientDto.cpf())) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         } try {
-            return toDto(patientRepository.save(patient));
+            return patientMapping.toDto(patientRepository.save(patient));
         } catch (PatientAlreadyExistsException e) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         }
@@ -99,7 +75,7 @@ public class PatientService {
     // Find by ID
     public PatientDto findById(UUID id) {
         return patientRepository.findById(id)
-                .map(this:: toDto)
+                .map(patientMapping:: toDto)
                 .orElseThrow(()-> new RuntimeException("Patient not found" + id));
     }
 
@@ -108,14 +84,14 @@ public class PatientService {
         return patientRepository
                 .findByUserNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one
-                .map(this::toDto)// Convert in Dto
+                .map(patientMapping::toDto)// Convert in Dto
                 .toList(); // List
     }
 
     // List by CPF
     public PatientDto findByCpf(String cpf) {
         return patientRepository.findByCpfContainingIgnoreCase(cpf)
-                .map(this::toDto)
+                .map(patientMapping::toDto)
                 .orElseThrow(()-> new RuntimeException("Patient not found" + cpf));
 
     }

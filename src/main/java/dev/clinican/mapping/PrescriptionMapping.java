@@ -8,23 +8,19 @@ import dev.clinican.entity.Prescription;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
-import dev.clinican.repository.PrescriptionRepository;
 
 public class PrescriptionMapping {
 
     private final ConsultationRepository consultationRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
-    private final PrescriptionRepository prescriptionRepository;
 
     public PrescriptionMapping(ConsultationRepository consultationRepository,
                                DoctorRepository doctorRepository,
-                               PatientRepository patientRepository,
-                               PrescriptionRepository prescriptionRepository) {
+                               PatientRepository patientRepository) {
         this.consultationRepository = consultationRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
-        this.prescriptionRepository = prescriptionRepository;
     }
 
 
@@ -57,7 +53,4 @@ public class PrescriptionMapping {
 
         return prescription;
     }
-
-
-
 }
