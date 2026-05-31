@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/tbUser")
+@RequestMapping(value = "/tbUser")
 
 public class TbUserController {
 

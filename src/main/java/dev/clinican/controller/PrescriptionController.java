@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/prescription")
+@RequestMapping(value = "/prescription")
 
 public class PrescriptionController {
 

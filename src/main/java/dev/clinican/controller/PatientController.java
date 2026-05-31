@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/patient")
+@RequestMapping(value = "/patient")
 public class PatientController {
 
     private final PatientService patientService;
@@ -25,8 +25,8 @@ public class PatientController {
     }
 
     // Find by Name
-    @GetMapping("/name/")
-    List<PatientDto> findByName(String name) {
+    @GetMapping("/name/{name}")
+    List<PatientDto> findByName(@PathVariable String name) {
         return patientService.findByName(name);
     }
 
