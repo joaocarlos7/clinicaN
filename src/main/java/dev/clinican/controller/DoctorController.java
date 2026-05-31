@@ -25,7 +25,7 @@ public class DoctorController {
     }
 
     // List By Name
-    @GetMapping()
+    @GetMapping("/doctor/name")
     List<DoctorDto> search(@RequestParam(required = false) String name) {
         return doctorService.findByDoctorName(name);
     }
