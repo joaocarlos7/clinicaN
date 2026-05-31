@@ -24,7 +24,7 @@ public class ConsultationController {
         return consultationService.findById(id);
         }
 
-    @GetMapping
+    @GetMapping("/search")
     List<ConsultationDto> search(
             @RequestParam(required = false) String doctorName,
             @RequestParam(required = false) String patientName,

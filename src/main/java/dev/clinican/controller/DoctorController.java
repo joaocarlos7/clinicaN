@@ -25,12 +25,12 @@ public class DoctorController {
     }
 
     // List By Name
-    @GetMapping("/doctor/name")
+    @GetMapping("/name/")
     List<DoctorDto> search(@RequestParam(required = false) String name) {
         return doctorService.findByDoctorName(name);
     }
 
-    @GetMapping("/doctor/{crm}")
+    @GetMapping("/crm/{crm}")
     DoctorDto findByCrm(@PathVariable Integer crm) {
         return doctorService.findByCrm(crm);
     }

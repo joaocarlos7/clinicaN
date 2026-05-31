@@ -25,13 +25,13 @@ public class PatientController {
     }
 
     // Find by Name
-    @GetMapping
+    @GetMapping("/name/")
     List<PatientDto> findByName(String name) {
         return patientService.findByName(name);
     }
 
     // Find By CPF
-    @GetMapping("/patient/{cpf}")
+    @GetMapping("/cpf/{cpf}")
     PatientDto findByCpf(@PathVariable String cpf) {
         return patientService.findByCpf(cpf);
     }
