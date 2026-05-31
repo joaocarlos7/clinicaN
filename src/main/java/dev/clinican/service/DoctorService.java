@@ -5,6 +5,7 @@ import dev.clinican.dto.DoctorDto;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
 import dev.clinican.exception.DoctorAlreadyExistisException;
+import dev.clinican.mapping.DoctorMapping;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
@@ -17,39 +18,15 @@ public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final TbUserRepository tbUserRepository;
+    private final DoctorMapping doctorMapping;
 
-    public DoctorService(DoctorRepository doctorRepository, TbUserRepository tbUserRepository) {
+    public DoctorService(DoctorRepository doctorRepository,
+                         TbUserRepository tbUserRepository,
+                         DoctorMapping doctorMapping) {
         this.doctorRepository = doctorRepository;
         this.tbUserRepository = tbUserRepository;
+        this.doctorMapping = doctorMapping;
     }
-
-    // Convert Methods
-
-    // DTO to Entity (Entry)
-    private Doctor toEntity(DoctorDto doctorDto) {
-        TbUser user = tbUserRepository.findById(doctorDto.userId())
-                .orElseThrow(()-> new RuntimeException("User not found"));
-
-        Doctor doctor = new Doctor();
-        doctor.setUser(user);
-        doctor.setCrm(doctorDto.crm());
-        doctor.setSpeciality(doctorDto.speciality());
-        doctor.setPhoneNumber(doctorDto.phoneNumber());
-
-        return doctor;
-    }
-
-    // Entity To DTO (Exit)
-    private DoctorDto toDto(Doctor doctor) {
-        return new DoctorDto(
-                doctor.getId(),
-                doctor.getUser().getId(),
-                doctor.getCrm(),
-                doctor.getSpeciality(),
-                doctor.getPhoneNumber()
-        );
-    }
-
 
     // Public Methods
 
@@ -58,9 +35,9 @@ public class DoctorService {
         if(doctorRepository.existsByCrm(doctorDto.crm())) {
             throw new DoctorAlreadyExistisException(doctorDto.crm());
         } try {
-            Doctor doctor = toEntity(doctorDto);
+            Doctor doctor = doctorMapping.toEntity(doctorDto);
             Doctor saveDoctor = doctorRepository.save(doctor);
-            return toDto(saveDoctor);
+            return doctorMapping.toDto(saveDoctor);
         } catch (DoctorAlreadyExistisException e) {
             throw new DoctorAlreadyExistisException(doctorDto.crm());}
     }
@@ -80,7 +57,7 @@ public class DoctorService {
         if (doctorRepository.existsByCrm(doctorDto.crm())) {
             throw new DoctorAlreadyExistisException(doctorDto.crm());
         } try {
-            return toDto(doctorRepository.save(doctor));
+            return doctorMapping.toDto(doctorRepository.save(doctor));
         } catch (DoctorAlreadyExistisException e) {
             throw new DoctorAlreadyExistisException(doctorDto.crm());}}
 
@@ -92,7 +69,7 @@ public class DoctorService {
     // List By Doctor Id
     public DoctorDto findById(UUID id) {
     return doctorRepository.findById(id)
-            .map(this::toDto)
+            .map(doctorMapping::toDto)
             .orElseThrow(() -> new RuntimeException("Doctor not found" + id));
 }
 
@@ -101,14 +78,14 @@ public class DoctorService {
     return doctorRepository
             .findByUserNameContainingIgnoreCase(name)
             .stream() // Take the list one by one
-            .map(this::toDto)// Convert in Dto
+            .map(doctorMapping::toDto)// Convert in Dto
             .toList(); // List
 }
 
     // List By Doctor CRM
     public DoctorDto findByCrm(Integer crm) {
     return doctorRepository.findByCrmContainingIgnoreCase(crm)
-            .map(this::toDto)
+            .map(doctorMapping::toDto)
             .orElseThrow(() -> new RuntimeException("CRM not found" + crm));
 }
 
