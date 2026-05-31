@@ -3,6 +3,7 @@ package dev.clinican.service;
 
 import dev.clinican.dto.PrescriptionDto;
 import dev.clinican.entity.*;
+import dev.clinican.mapping.PrescriptionMapping;
 import dev.clinican.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -18,57 +19,28 @@ public class PrescriptionService {
     private final ConsultationRepository consultationRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final PrescriptionMapping prescriptionMapping;
 
     public PrescriptionService(PrescriptionRepository prescriptionRepository,
                                ConsultationRepository consultationRepository,
                                PatientRepository patientRepository,
-                               DoctorRepository doctorRepository) {
+                               DoctorRepository doctorRepository,
+                               PrescriptionMapping prescriptionMapping) {
         this.prescriptionRepository = prescriptionRepository;
         this.consultationRepository = consultationRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
-    }
-
-
-    // Conversion Methods
-
-    // DTO to Entity (Entry)
-    private Prescription toEntity(PrescriptionDto prescriptionDto) {
-        Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + prescriptionDto.consultationID()));
-        Patient patient = patientRepository.findById(prescriptionDto.patientID())
-                .orElseThrow(() -> new RuntimeException("Patient not found" + prescriptionDto.patientID()));
-        Doctor doctor = doctorRepository.findById(prescriptionDto.doctorID())
-                .orElseThrow(() -> new RuntimeException("Doctor not found" + prescriptionDto.doctorID()));
-
-        Prescription prescription = new Prescription();
-        prescription.setPatient(patient);
-        prescription.setDoctor(doctor);
-        prescription.setConsultation(consultation);
-        prescription.setObservation(prescriptionDto.observation());
-        prescription.setCreatedAt(prescriptionDto.createdAt());
-
-        return prescription;
-    }
-    // Entity to DTO (Exit)
-    private PrescriptionDto toDto(Prescription prescription) {
-        return new PrescriptionDto(
-                prescription.getId(),
-                prescription.getConsultation().getId(),
-                prescription.getDoctor().getId(),
-                prescription.getPatient().getId(),
-                prescription.getCreatedAt(),
-                prescription.getObservation());
+        this.prescriptionMapping = prescriptionMapping;
     }
 
     // Public Methods
 
     // Create
     public PrescriptionDto create(PrescriptionDto prescriptionDto) {
-        Prescription prescription = toEntity(prescriptionDto);
+        Prescription prescription = prescriptionMapping.toEntity(prescriptionDto);
         Prescription savePrescription = prescriptionRepository.save(prescription);
 
-        return toDto(savePrescription);
+        return prescriptionMapping.toDto(savePrescription);
     }
 
     // Update
@@ -94,7 +66,7 @@ public class PrescriptionService {
         prescription.setCreatedAt(prescriptionDto.createdAt());
 
 
-        return toDto(prescriptionRepository.save(toEntity(prescriptionDto)));
+        return prescriptionMapping.toDto(prescriptionRepository.save(prescriptionMapping.toEntity(prescriptionDto)));
 
     }
 
@@ -106,7 +78,7 @@ public class PrescriptionService {
     // Find by ID
     public PrescriptionDto findById(UUID id) {
         return prescriptionRepository.findById(id)
-                .map(this::toDto)
+                .map(prescriptionMapping::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
@@ -114,7 +86,7 @@ public class PrescriptionService {
     public List<PrescriptionDto> findByObservation(String observation) {
         return prescriptionRepository.findByObservationContainingIgnoreCase(observation)
                 .stream() // Take the list one by one
-                .map(this::toDto)// Convert in Dto
+                .map(prescriptionMapping::toDto)// Convert in Dto
                 .toList(); // List
     }
 
@@ -122,7 +94,7 @@ public class PrescriptionService {
     public List<PrescriptionDto> findByCreatedAt(LocalDateTime localDate) {
         return prescriptionRepository.findByCreatedAtContainingIgnoreCase(localDate)
                 .stream() // Take the list one by one
-                .map(this::toDto)// Convert in Dto
+                .map(prescriptionMapping::toDto)// Convert in Dto
                 .toList(); // List
     }
 }
