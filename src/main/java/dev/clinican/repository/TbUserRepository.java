@@ -11,6 +11,7 @@ public interface TbUserRepository extends JpaRepository<TbUser, UUID> {
 
     List<TbUser> findByNameContainingIgnoreCase(String name);
     Optional<TbUser> findByEmail(String email);
+    boolean existsByEmailAndIdNot(String email, UUID id);
     boolean existsByEmail(String email);
 
 }

@@ -5,6 +5,7 @@ import dev.clinican.dto.TbUserDto;
 import dev.clinican.dto.TbUserLoginDto;
 import dev.clinican.entity.TbUser;
 import dev.clinican.exception.UserAlreadyExistsException;
+import dev.clinican.mapping.TbUserMapping;
 import dev.clinican.repository.TbUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,33 +19,13 @@ import java.util.UUID;
 public class TbUserService {
 
     private final TbUserRepository tbUserRepository;
-    public TbUserService(TbUserRepository repository) {
+    private final TbUserMapping tbUserMapping;
+    public TbUserService(TbUserRepository repository,
+                         TbUserMapping tbUserMapping) {
         this.tbUserRepository = repository;
+        this.tbUserMapping = tbUserMapping;
     }
 
-    // Convert Methods
-    // Entity to DTO (Exit)
-    private TbUserDto toDto(TbUser user) {
-        return new TbUserDto(user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRoleType(),
-                user.getCreatedAt(),
-                user.getActive());}
-
-    // DTO to Entity (Entry)
-    private TbUser toEntity(TbUserLoginDto user) {
-        TbUser tbUser = new TbUser();
-        tbUser.setName(user.name());
-        tbUser.setEmail(user.email());
-        tbUser.setPassword(user.password());
-        tbUser.setRoleType(user.role());
-        tbUser.setCreatedAt(user.createdAt());
-        tbUser.setActive(user.active());
-
-        return tbUser;
-
-    }
 
 
     // Public Methods
@@ -55,9 +36,9 @@ public class TbUserService {
             throw new UserAlreadyExistsException(user.email());
         } try {
 
-        TbUser tbUser = toEntity(user);
+        TbUser tbUser = tbUserMapping.toEntity(user);
         TbUser saveTbUser = tbUserRepository.save(tbUser);
-            return toDto(saveTbUser);
+            return tbUserMapping.toDto(saveTbUser);
 
     } catch (RuntimeErrorException e) {
         throw new UserAlreadyExistsException(user.email());
@@ -75,10 +56,10 @@ public class TbUserService {
         tbUser.setCreatedAt(user.createdAt());
         tbUser.setActive(user.active());
 
-        if (tbUserRepository.existsByEmail(user.email())) {
+        if (tbUserRepository.existsByEmailAndIdNot(user.email(), id)) {
             throw new UserAlreadyExistsException(user.email());
         } try {
-        return toDto(tbUserRepository.save(tbUser));
+        return tbUserMapping.toDto((tbUserRepository.save(tbUser)));
 
     } catch (RuntimeErrorException e) {
         throw new UserAlreadyExistsException(user.email());}
@@ -92,7 +73,7 @@ public class TbUserService {
     // Find by Id
     public TbUserDto findById(UUID id) {
         return tbUserRepository.findById(id)
-                .map(this::toDto)
+                .map(tbUserMapping::toDto)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
@@ -100,7 +81,7 @@ public class TbUserService {
     public List<TbUserDto> findByName(String name) {
         return tbUserRepository.findByNameContainingIgnoreCase(name)
                 .stream() // Take the list one by one
-                .map(this::toDto)// Convert in Dto
+                .map(tbUserMapping::toDto)// Convert in Dto
                 .toList(); // List
     }
 }
