@@ -47,7 +47,7 @@ Verifique se o container subiu:
 docker ps
 ```
 
-Deve aparecer um container chamado `enviarPedido` com status `Up`.
+Deve aparecer um container chamado `clinicaN` com status `Up`.
 
 **Credenciais do banco:**
 
