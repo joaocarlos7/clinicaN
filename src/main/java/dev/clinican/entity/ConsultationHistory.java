@@ -29,11 +29,11 @@ public class ConsultationHistory {
     private Consultation consultation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_before", columnDefinition = "status_type")
+    @Column(name = "status_before")
     private ConsultationStatus statusBefore;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_new", nullable = false, columnDefinition = "status_type")
+    @Column(name = "status_new", nullable = false)
     private ConsultationStatus statusNew;
 
     @ManyToOne

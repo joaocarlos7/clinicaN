@@ -37,7 +37,7 @@ public class Consultation {
     private LocalDateTime consultationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "consultation_status")
+    @Column(name = "consultation_status", nullable = false)
     private ConsultationStatus consultationStatus;
 
     @Column(length = 500)

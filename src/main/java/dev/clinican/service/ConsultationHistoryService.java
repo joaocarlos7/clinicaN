@@ -1,25 +1,30 @@
 package dev.clinican.service;
 
 
+import dev.clinican.dto.ConsultationDto;
+import dev.clinican.dto.ConsultationHistoryDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.ConsultationHistory;
 import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.ConsultationStatus;
+import dev.clinican.mapping.ConsultationHistoryMapping;
 import dev.clinican.repository.ConsultationHistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 
 public class ConsultationHistoryService {
 
     private final ConsultationHistoryRepository consultationHistoryRepository;
+    public final ConsultationHistoryMapping consultationHistoryMapping;
 
-    public ConsultationHistoryService(ConsultationHistoryRepository consultationHistoryRepository) {
+    public ConsultationHistoryService(ConsultationHistoryRepository consultationHistoryRepository,
+                                      ConsultationHistoryMapping consultationHistoryMapping) {
         this.consultationHistoryRepository = consultationHistoryRepository;
+        this.consultationHistoryMapping = consultationHistoryMapping;
     }
 
     public ConsultationHistory recordChange(
@@ -39,11 +44,14 @@ public class ConsultationHistoryService {
         return consultationHistoryRepository.save(history);
     }
 
-    // ConsultationByID
-    public List<ConsultationHistory> findByConsultationId(UUID consultationId) {
-        return consultationHistoryRepository.findByConsultationId(consultationId);
-    }
 
+
+    public List<ConsultationHistoryDto> findAll() {
+        return consultationHistoryRepository.findAll()
+                .stream()
+                .map(consultationHistoryMapping::toDto)
+                .toList();
+    }
 
 
 }
