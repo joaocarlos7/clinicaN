@@ -8,7 +8,9 @@ import dev.clinican.entity.TbUser;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
 import dev.clinican.repository.TbUserRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ConsultationMapping {
 
     private final DoctorRepository doctorRepository;

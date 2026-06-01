@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 public interface PatientRepository extends JpaRepository<Patient, UUID> {
 
     List<Patient> findByUserNameContainingIgnoreCase(String name);

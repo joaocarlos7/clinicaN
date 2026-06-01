@@ -8,7 +8,9 @@ import dev.clinican.entity.Prescription;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.PatientRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PrescriptionMapping {
 
     private final ConsultationRepository consultationRepository;

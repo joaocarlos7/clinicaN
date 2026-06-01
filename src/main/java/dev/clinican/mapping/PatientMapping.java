@@ -4,7 +4,9 @@ import dev.clinican.dto.PatientDto;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.repository.TbUserRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PatientMapping {
 
     private final TbUserRepository tbUserRepository;

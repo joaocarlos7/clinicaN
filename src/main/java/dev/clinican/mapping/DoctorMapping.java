@@ -4,7 +4,9 @@ import dev.clinican.dto.DoctorDto;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
 import dev.clinican.repository.TbUserRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DoctorMapping {
 
     private final TbUserRepository tbUserRepository;
