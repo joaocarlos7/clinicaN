@@ -95,6 +95,27 @@ public class ConsultationService {
         return consultationMapping.toDto(savedConsultation);
     }
 
+    public ConsultationDto updateStatus(UUID id, ConsultationDto consultationDto) {
+
+        Consultation consultation = consultationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Consultation not found" + consultationDto.id()));
+
+        ConsultationStatus oldStatus = consultation.getConsultationStatus();
+
+        consultation.setReason(consultationDto.reason());
+        consultation.setNote(consultationDto.note());
+        consultation.setConsultationStatus(consultationDto.consultationStatus());
+
+        Consultation savedConsultation = consultationRepository.save(consultation);
+        consultationHistoryService.recordChange(
+                savedConsultation,
+                oldStatus,
+                savedConsultation.getConsultationStatus(),
+                savedConsultation.getCreatedBy()
+        );
+        return consultationMapping.toDto(savedConsultation);
+    }
+
     //  Delete
     public void delete(UUID id) {
         consultationRepository.deleteById(id);

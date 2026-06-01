@@ -24,14 +24,20 @@ public class ConsultationController {
         return consultationService.findById(id);
         }
 
-    @GetMapping("/search")
-    List<ConsultationDto> search(
-            @RequestParam(required = false) String doctorName,
-            @RequestParam(required = false) String patientName,
-            @RequestParam(required = false) String observation
-    ) {
+    @GetMapping("/doctorName/{doctorName}")
+    List<ConsultationDto> findByDoctorName(@PathVariable(required = false) String doctorName) {
         if (doctorName != null) return consultationService.findByDoctorName(doctorName);
+        return List.of();
+    }
+
+    @GetMapping("/patientName/{patientName}")
+    List<ConsultationDto> findByPatientName(@PathVariable(required = false) String patientName) {
         if (patientName != null) return consultationService.findByPatientName(patientName);
+        return List.of();
+    }
+
+    @GetMapping("/observation/{observation}")
+    List<ConsultationDto> findByObservation(@PathVariable(required = false) String observation) {
         if (observation != null) return consultationService.findByObservation(observation);
         return List.of();
     }
@@ -47,6 +53,13 @@ public class ConsultationController {
     ConsultationDto updateConsultation(@PathVariable UUID id, @RequestBody ConsultationDto consultationDto) {
         return consultationService.update(id,  consultationDto);
     }
+
+    // Update Status
+    @PutMapping("/updateStatus/{id}")
+    ConsultationDto updateConsultationStatus(@PathVariable UUID id, @RequestBody ConsultationDto consultationDto) {
+        return consultationService.updateStatus(id, consultationDto);
+    }
+
 
     // Delete
     @DeleteMapping("/{id}")
