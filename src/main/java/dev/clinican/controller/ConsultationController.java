@@ -37,7 +37,7 @@ public class ConsultationController {
     }
 
     // Create
-    @PostMapping
+    @PostMapping("/create")
     ConsultationDto createConsultation(@RequestBody ConsultationDto consultationDto) {
         return consultationService.create(consultationDto);
     }
