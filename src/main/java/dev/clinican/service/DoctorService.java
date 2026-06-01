@@ -4,7 +4,9 @@ package dev.clinican.service;
 import dev.clinican.dto.DoctorDto;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
-import dev.clinican.exception.DoctorAlreadyExistisException;
+import dev.clinican.exception.DoctorAlreadyExistsException;
+import dev.clinican.exception.DoctorNotFoundException;
+import dev.clinican.exception.UserNotFoundException;
 import dev.clinican.mapping.DoctorMapping;
 import dev.clinican.repository.DoctorRepository;
 import dev.clinican.repository.TbUserRepository;
@@ -33,34 +35,35 @@ public class DoctorService {
     // Create
     public DoctorDto create(DoctorDto doctorDto) {
         if(doctorRepository.existsByCrm(doctorDto.crm())) {
-            throw new DoctorAlreadyExistisException(doctorDto.crm());
-        } try {
+            throw new DoctorAlreadyExistsException(doctorDto.crm());
+        }
             Doctor doctor = doctorMapping.toEntity(doctorDto);
             Doctor saveDoctor = doctorRepository.save(doctor);
             return doctorMapping.toDto(saveDoctor);
-        } catch (DoctorAlreadyExistisException e) {
-            throw new DoctorAlreadyExistisException(doctorDto.crm());}
+
     }
 
     // Update
     public DoctorDto update(UUID id, DoctorDto doctorDto) {
         TbUser user = tbUserRepository.findById(doctorDto.userId())
-                .orElseThrow(()-> new RuntimeException("User not found"));
+                .orElseThrow(()-> new UserNotFoundException(doctorDto.userId()));
 
         Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + doctorDto.id()));
+                .orElseThrow(() -> new DoctorNotFoundException(id));
+
+        boolean crmConflict = doctorRepository.existsByCrm(doctorDto.crm())
+                && !doctor.getCrm().equals(doctorDto.crm());
+
+        if (crmConflict) {
+            throw new DoctorAlreadyExistsException(doctorDto.crm());
+        }
         doctor.setUser(user);
         doctor.setCrm(doctorDto.crm());
         doctor.setSpeciality(doctorDto.speciality());
         doctor.setPhoneNumber(doctorDto.phoneNumber());
 
-        if (doctorRepository.existsByCrm(doctorDto.crm())) {
-            throw new DoctorAlreadyExistisException(doctorDto.crm());
-        } try {
             return doctorMapping.toDto(doctorRepository.save(doctor));
-        } catch (DoctorAlreadyExistisException e) {
-            throw new DoctorAlreadyExistisException(doctorDto.crm());}}
-
+}
     // Delete
     public void delete(UUID id) {
     doctorRepository.deleteById(id);
