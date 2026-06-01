@@ -1,4 +1,4 @@
-# Enviar Pedido
+# CRUD de Uma Clínica
 
 Crud feito em Spring Boot com PostgreSQL. 
 
