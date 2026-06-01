@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -48,6 +49,28 @@ public class ConsultationHistoryService {
 
     public List<ConsultationHistoryDto> findAll() {
         return consultationHistoryRepository.findAll()
+                .stream()
+                .map(consultationHistoryMapping::toDto)
+                .toList();
+    }
+
+    public ConsultationHistoryDto findById(UUID id) {
+        return consultationHistoryRepository.findByConsultationId(id)
+                .stream()
+                .map(consultationHistoryMapping::toDto)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("ConsultationHistory not found" + id));
+    }
+
+    public List<ConsultationHistoryDto> findByDoctorUserName(String name) {
+        return consultationHistoryRepository.findByConsultationDoctorUserNameContainingIgnoreCase(name)
+                .stream()
+                .map(consultationHistoryMapping::toDto)
+                .toList();
+    }
+
+    public List<ConsultationHistoryDto> findByPatientUserName(String name) {
+        return consultationHistoryRepository.findByConsultationPatientUserNameContainingIgnoreCase(name)
                 .stream()
                 .map(consultationHistoryMapping::toDto)
                 .toList();

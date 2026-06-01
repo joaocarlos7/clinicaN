@@ -1,9 +1,7 @@
 package dev.clinican.mapping;
 
 
-import dev.clinican.dto.ConsultationDto;
 import dev.clinican.dto.ConsultationHistoryDto;
-import dev.clinican.entity.Consultation;
 import dev.clinican.entity.ConsultationHistory;
 import org.springframework.stereotype.Component;
 
