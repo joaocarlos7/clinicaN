@@ -8,6 +8,7 @@ import dev.clinican.exception.UserAlreadyExistsException;
 import dev.clinican.exception.UserNotFoundException;
 import dev.clinican.mapping.TbUserMapping;
 import dev.clinican.repository.TbUserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +21,14 @@ public class TbUserService {
 
     private final TbUserRepository tbUserRepository;
     private final TbUserMapping tbUserMapping;
+    private final PasswordEncoder passwordEncoder;
+
     public TbUserService(TbUserRepository repository,
-                         TbUserMapping tbUserMapping) {
+                         TbUserMapping tbUserMapping,
+                         PasswordEncoder passwordEncoder) {
         this.tbUserRepository = repository;
         this.tbUserMapping = tbUserMapping;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -38,6 +43,7 @@ public class TbUserService {
         }
 
         TbUser tbUser = tbUserMapping.toEntity(user);
+        tbUser.setPassword(passwordEncoder.encode(user.password()));
         TbUser saveTbUser = tbUserRepository.save(tbUser);
         return tbUserMapping.toDto(saveTbUser);
 
@@ -56,7 +62,7 @@ public class TbUserService {
         }
         tbUser.setName(user.name());
         tbUser.setEmail(user.email());
-        tbUser.setPassword(user.password());
+        tbUser.setPassword(passwordEncoder.encode(user.password()));
         tbUser.setRoleType(user.role());
         tbUser.setCreatedAt(user.createdAt());
         tbUser.setActive(user.active());
@@ -66,7 +72,8 @@ public class TbUserService {
 
     // Delete
     public void delete(UUID id) {
-        if (!tbUserRepository.existsById(id)) {
+        boolean exists = tbUserRepository.existsById(id);
+        if(!exists) {
             throw new UserNotFoundException(id);
         }
         tbUserRepository.deleteById(id);
