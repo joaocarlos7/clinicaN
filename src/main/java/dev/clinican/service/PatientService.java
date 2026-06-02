@@ -5,6 +5,9 @@ import dev.clinican.dto.PatientDto;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.exception.PatientAlreadyExistsException;
+import dev.clinican.exception.PatientCpfNotFound;
+import dev.clinican.exception.PatientNotFound;
+import dev.clinican.exception.UserNotFoundException;
 import dev.clinican.mapping.PatientMapping;
 import dev.clinican.repository.PatientRepository;
 import dev.clinican.repository.TbUserRepository;
@@ -45,30 +48,35 @@ public class PatientService {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         }
     }
+
     // Update
     public PatientDto update(UUID id, PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())
-                .orElseThrow(()-> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(patientDto.userId()));
 
         Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + patientDto.id()));
+                .orElseThrow(() -> new PatientNotFound(id));
+
+        boolean patientAlreadyExists = patientRepository.existsByCpf(patientDto.cpf())
+                && !patient.getCpf().equals(patientDto.cpf());
+
+        if (patientAlreadyExists) {
+            throw new PatientAlreadyExistsException(patientDto.cpf());
+        }
         patient.setUser(user);
         patient.setCpf(patientDto.cpf());
         patient.setBornDay(patientDto.bornDay());
         patient.setAddress(patientDto.address());
         patient.setPhoneNumber(patientDto.phoneNumber());
 
-        if (patientRepository.existsByCpf(patientDto.cpf())) {
-            throw new PatientAlreadyExistsException(patientDto.cpf());
-        } try {
-            return patientMapping.toDto(patientRepository.save(patient));
-        } catch (PatientAlreadyExistsException e) {
-            throw new PatientAlreadyExistsException(patientDto.cpf());
-        }
+        return patientMapping.toDto(patientRepository.save(patient));
     }
 
     // Delete
     public void delete(UUID id) {
+        if(!patientRepository.existsById(id)) {
+            throw new PatientNotFound(id);
+        }
         patientRepository.deleteById(id);
     }
 
@@ -76,23 +84,23 @@ public class PatientService {
     public PatientDto findById(UUID id) {
         return patientRepository.findById(id)
                 .map(patientMapping:: toDto)
-                .orElseThrow(()-> new RuntimeException("Patient not found" + id));
+                .orElseThrow(()-> new PatientNotFound(id));
     }
 
     // List by Name
     public List<PatientDto> findByName(String name) {
         return patientRepository
                 .findByUserNameContainingIgnoreCase(name)
-                .stream() // Take the list one by one
-                .map(patientMapping::toDto)// Convert in Dto
-                .toList(); // List
+                .stream()
+                .map(patientMapping::toDto)
+                .toList();
     }
 
     // List by CPF
     public PatientDto findByCpf(String cpf) {
         return patientRepository.findByCpfContainingIgnoreCase(cpf)
                 .map(patientMapping::toDto)
-                .orElseThrow(()-> new RuntimeException("Patient not found" + cpf));
+                .orElseThrow(()-> new PatientCpfNotFound(cpf));
 
     }
 
