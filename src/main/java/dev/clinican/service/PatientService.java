@@ -37,16 +37,12 @@ public class PatientService {
 
     // Create
     public PatientDto create(PatientDto patientDto) {
-        Patient patient = patientMapping.toEntity(patientDto);
         if (patientRepository.existsByCpf(patientDto.cpf())) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
         }
-        try {
+        Patient patient = patientMapping.toEntity(patientDto);
             Patient savePatient = patientRepository.save(patient);
             return patientMapping.toDto(savePatient);
-        } catch (PatientAlreadyExistsException e) {
-            throw new PatientAlreadyExistsException(patientDto.cpf());
-        }
     }
 
     // Update
