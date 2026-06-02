@@ -3,6 +3,10 @@ package dev.clinican.service;
 
 import dev.clinican.dto.PrescriptionDto;
 import dev.clinican.entity.*;
+import dev.clinican.exception.ConsultationNotFound;
+import dev.clinican.exception.DoctorNotFoundException;
+import dev.clinican.exception.PatientNotFound;
+import dev.clinican.exception.PrescriptionNotFound;
 import dev.clinican.mapping.PrescriptionMapping;
 import dev.clinican.repository.*;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,8 @@ public class PrescriptionService {
 
     // Create
     public PrescriptionDto create(PrescriptionDto prescriptionDto) {
+
+
         Prescription prescription = prescriptionMapping.toEntity(prescriptionDto);
         Prescription savePrescription = prescriptionRepository.save(prescription);
 
@@ -47,31 +53,32 @@ public class PrescriptionService {
     public PrescriptionDto update(UUID id, PrescriptionDto prescriptionDto) {
 
         Prescription prescription = prescriptionRepository.findById(id)
-                        .orElseThrow(()-> new RuntimeException("Prescription not found" + id));
+                .orElseThrow(() -> new PrescriptionNotFound(id));
 
         Doctor doctor = doctorRepository.findById(prescriptionDto.doctorID())
-                        .orElseThrow(() -> new RuntimeException("Doctor not found" + prescriptionDto.doctorID()));
+                .orElseThrow(() -> new DoctorNotFoundException(id));
 
         Patient patient = patientRepository.findById(prescriptionDto.patientID())
-                        .orElseThrow(() -> new RuntimeException("Patient not found" + prescriptionDto.patientID()));
+                .orElseThrow(() -> new PatientNotFound(id));
 
-        Consultation consultation = consultationRepository.findById(prescriptionDto.consultationID())
-                        .orElseThrow(() -> new RuntimeException("Consultation not found" + prescriptionDto.consultationID()));
+        Consultation consultation = consultationRepository.findById(prescriptionDto.patientID())
+                .orElseThrow(()-> new ConsultationNotFound(id));
+
+            prescription.setConsultation(consultation);
+            prescription.setDoctor(doctor);
+            prescription.setPatient(patient);
+            prescription.setObservation(prescriptionDto.observation());
+            prescription.setCreatedAt(prescriptionDto.createdAt());
 
 
-        prescription.setConsultation(consultation);
-        prescription.setDoctor(doctor);
-        prescription.setPatient(patient);
-        prescription.setObservation(prescriptionDto.observation());
-        prescription.setCreatedAt(prescriptionDto.createdAt());
-
-
-        return prescriptionMapping.toDto(prescriptionRepository.save(prescriptionMapping.toEntity(prescriptionDto)));
-
+            return prescriptionMapping.toDto(prescriptionRepository.save(prescriptionMapping.toEntity(prescriptionDto)));
     }
 
     // Delete
     public void delete(UUID id) {
+        if(!prescriptionRepository.existsById(id)){
+            throw new PrescriptionNotFound(id);
+        }
         prescriptionRepository.deleteById(id);
     }
 
@@ -79,22 +86,22 @@ public class PrescriptionService {
     public PrescriptionDto findById(UUID id) {
         return prescriptionRepository.findById(id)
                 .map(prescriptionMapping::toDto)
-                .orElseThrow(() -> new RuntimeException("User not found: " + id));
+                .orElseThrow(() -> new PrescriptionNotFound(id));
     }
 
     // Find by Observation
     public List<PrescriptionDto> findByObservation(String observation) {
         return prescriptionRepository.findByObservationContainingIgnoreCase(observation)
-                .stream() // Take the list one by one
-                .map(prescriptionMapping::toDto)// Convert in Dto
-                .toList(); // List
+                .stream()
+                .map(prescriptionMapping::toDto)
+                .toList();
     }
 
     // Find by created date
     public List<PrescriptionDto> findByCreatedAt(LocalDateTime localDate) {
         return prescriptionRepository.findByCreatedAtContainingIgnoreCase(localDate)
-                .stream() // Take the list one by one
-                .map(prescriptionMapping::toDto)// Convert in Dto
-                .toList(); // List
+                .stream()
+                .map(prescriptionMapping::toDto)
+                .toList();
     }
 }
