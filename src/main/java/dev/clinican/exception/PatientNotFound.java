@@ -6,4 +6,5 @@ public class PatientNotFound extends RuntimeException {
     public PatientNotFound(UUID id) {
         super("Patient not found with id " + id);
     }
+
 }
