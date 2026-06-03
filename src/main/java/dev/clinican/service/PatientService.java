@@ -33,9 +33,6 @@ public class PatientService {
         this.patientMapping = patientMapping;
     }
 
-    // Public Methods
-
-    // Create
     public PatientDto create(PatientDto patientDto) {
         if (patientRepository.existsByCpf(patientDto.cpf())) {
             throw new PatientAlreadyExistsException(patientDto.cpf());
@@ -45,7 +42,6 @@ public class PatientService {
             return patientMapping.toDto(savePatient);
     }
 
-    // Update
     public PatientDto update(UUID id, PatientDto patientDto) {
         TbUser user = tbUserRepository.findById(patientDto.userId())
                 .orElseThrow(() -> new UserNotFoundException(patientDto.userId()));
@@ -53,11 +49,11 @@ public class PatientService {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFound(id));
 
-        boolean patientAlreadyExists = patientRepository.existsByCpf(patientDto.cpf())
+        boolean patientNotExits = !patientRepository.existsByCpf(patientDto.cpf())
                 && !patient.getCpf().equals(patientDto.cpf());
 
-        if (patientAlreadyExists) {
-            throw new PatientAlreadyExistsException(patientDto.cpf());
+        if (patientNotExits) {
+            throw new PatientNotFound(patientDto.id());
         }
         patient.setUser(user);
         patient.setCpf(patientDto.cpf());
@@ -68,7 +64,6 @@ public class PatientService {
         return patientMapping.toDto(patientRepository.save(patient));
     }
 
-    // Delete
     public void delete(UUID id) {
         boolean exists = patientRepository.existsById(id);
         if(!exists) {
@@ -77,14 +72,12 @@ public class PatientService {
         patientRepository.deleteById(id);
     }
 
-    // Find by ID
     public PatientDto findById(UUID id) {
         return patientRepository.findById(id)
                 .map(patientMapping:: toDto)
                 .orElseThrow(()-> new PatientNotFound(id));
     }
 
-    // List by Name
     public List<PatientDto> findByName(String name) {
         return patientRepository
                 .findByUserNameContainingIgnoreCase(name)
@@ -93,7 +86,6 @@ public class PatientService {
                 .toList();
     }
 
-    // List by CPF
     public PatientDto findByCpf(String cpf) {
         return patientRepository.findByCpfContainingIgnoreCase(cpf)
                 .map(patientMapping::toDto)

@@ -33,9 +33,6 @@ public class TbUserService {
 
 
 
-    // Public Methods
-
-    // Create
     public TbUserDto create(TbUserLoginDto user) {
 
         if(tbUserRepository.existsByEmail(user.email())) {
@@ -49,7 +46,6 @@ public class TbUserService {
 
     }
 
-    // Update
     public TbUserDto update(UUID id, TbUserLoginDto user) {
         TbUser tbUser = tbUserRepository.findById(id).
                 orElseThrow(() -> new UserNotFoundException(id));
@@ -70,7 +66,6 @@ public class TbUserService {
 
     }
 
-    // Delete
     public void delete(UUID id) {
         boolean exists = tbUserRepository.existsById(id);
         if(!exists) {
@@ -79,14 +74,12 @@ public class TbUserService {
         tbUserRepository.deleteById(id);
     }
 
-    // Find by Id
     public TbUserDto findById(UUID id) {
         return tbUserRepository.findById(id)
                 .map(tbUserMapping::toDto)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    // Find by Name
     public List<TbUserDto> findByName(String name) {
         return tbUserRepository.findByNameContainingIgnoreCase(name)
                 .stream()

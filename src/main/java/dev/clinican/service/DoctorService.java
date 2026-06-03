@@ -31,9 +31,6 @@ public class DoctorService {
         this.doctorMapping = doctorMapping;
     }
 
-    // Public Methods
-
-    // Create
     public DoctorDto create(DoctorDto doctorDto) {
         if(doctorRepository.existsByCrm(doctorDto.crm())) {
             throw new DoctorAlreadyExistsException(doctorDto.crm());
@@ -44,7 +41,6 @@ public class DoctorService {
 
     }
 
-    // Update
     public DoctorDto update(UUID id, DoctorDto doctorDto) {
         TbUser user = tbUserRepository.findById(doctorDto.userId())
                 .orElseThrow(()-> new UserNotFoundException(doctorDto.userId()));
@@ -52,11 +48,11 @@ public class DoctorService {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException(id));
 
-        boolean crmConflict = doctorRepository.existsByCrm(doctorDto.crm())
+        boolean crmNotFound = !doctorRepository.existsByCrm(doctorDto.crm())
                 && !doctor.getCrm().equals(doctorDto.crm());
 
-        if (crmConflict) {
-            throw new DoctorAlreadyExistsException(doctorDto.crm());
+        if (crmNotFound) {
+            throw new DoctorNotFoundException(doctorDto.id());
         }
         doctor.setUser(user);
         doctor.setCrm(doctorDto.crm());
@@ -65,7 +61,6 @@ public class DoctorService {
 
             return doctorMapping.toDto(doctorRepository.save(doctor));
 }
-    // Delete
     public void delete(UUID id) {
         boolean exists = doctorRepository.existsById(id);
         if(!exists) {
@@ -74,14 +69,12 @@ public class DoctorService {
         doctorRepository.deleteById(id);
 }
 
-    // List By Doctor Id
     public DoctorDto findById(UUID id) {
     return doctorRepository.findById(id)
             .map(doctorMapping::toDto)
             .orElseThrow(() -> new DoctorNotFoundException(id));
 }
 
-    // List By Doctor Name
     public List<DoctorDto> findByDoctorName(String name) {
     return doctorRepository
             .findByUserNameContainingIgnoreCase(name)
@@ -90,7 +83,6 @@ public class DoctorService {
             .toList();
 }
 
-    // List By Doctor CRM
     public DoctorDto findByCrm(Integer crm) {
     return doctorRepository.findByCrmContainingIgnoreCase(crm)
             .map(doctorMapping::toDto)

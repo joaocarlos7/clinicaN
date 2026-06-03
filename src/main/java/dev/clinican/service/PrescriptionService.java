@@ -37,9 +37,6 @@ public class PrescriptionService {
         this.prescriptionMapping = prescriptionMapping;
     }
 
-    // Public Methods
-
-    // Create
     public PrescriptionDto create(PrescriptionDto prescriptionDto) {
 
 
@@ -49,7 +46,6 @@ public class PrescriptionService {
         return prescriptionMapping.toDto(savePrescription);
     }
 
-    // Update
     public PrescriptionDto update(UUID id, PrescriptionDto prescriptionDto) {
 
         Prescription prescription = prescriptionRepository.findById(id)
@@ -74,7 +70,6 @@ public class PrescriptionService {
             return prescriptionMapping.toDto(prescriptionRepository.save(prescriptionMapping.toEntity(prescriptionDto)));
     }
 
-    // Delete
     public void delete(UUID id) {
         if(!prescriptionRepository.existsById(id)){
             throw new PrescriptionNotFound(id);
@@ -82,14 +77,12 @@ public class PrescriptionService {
         prescriptionRepository.deleteById(id);
     }
 
-    // Find by ID
     public PrescriptionDto findById(UUID id) {
         return prescriptionRepository.findById(id)
                 .map(prescriptionMapping::toDto)
                 .orElseThrow(() -> new PrescriptionNotFound(id));
     }
 
-    // Find by Observation
     public List<PrescriptionDto> findByObservation(String observation) {
         return prescriptionRepository.findByObservationContainingIgnoreCase(observation)
                 .stream()
@@ -97,7 +90,6 @@ public class PrescriptionService {
                 .toList();
     }
 
-    // Find by created date
     public List<PrescriptionDto> findByCreatedAt(LocalDateTime localDate) {
         return prescriptionRepository.findByCreatedAtContainingIgnoreCase(localDate)
                 .stream()

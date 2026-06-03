@@ -6,6 +6,10 @@ import dev.clinican.entity.Doctor;
 import dev.clinican.entity.Patient;
 import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.ConsultationStatus;
+import dev.clinican.exception.ConsultationNotFound;
+import dev.clinican.exception.DoctorNotFoundException;
+import dev.clinican.exception.PatientNotFound;
+import dev.clinican.exception.UserNotFoundException;
 import dev.clinican.mapping.ConsultationMapping;
 import dev.clinican.repository.ConsultationRepository;
 import dev.clinican.repository.DoctorRepository;
@@ -42,9 +46,6 @@ public class ConsultationService {
         this.consultationMapping = consultationMapping;
     }
 
-    // Public Methods
-
-    // Create
     public ConsultationDto create(ConsultationDto consultationDto) {
 
         Consultation consultation = consultationMapping.toEntity(consultationDto);
@@ -61,18 +62,17 @@ public class ConsultationService {
 
     }
 
-    //  Update
     public ConsultationDto update(UUID id, ConsultationDto consultationDto) {
 
         Doctor doctor = doctorRepository.findById(consultationDto.doctorId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found" + consultationDto.doctorId()));
+                .orElseThrow(() -> new DoctorNotFoundException(consultationDto.doctorId()));
         Patient patient = patientRepository.findById(consultationDto.patientId())
-                .orElseThrow(() -> new RuntimeException("Patient not found" + consultationDto.patientId()));
+                .orElseThrow(() -> new PatientNotFound(consultationDto.patientId()));
 
         Consultation consultation = consultationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + consultationDto.id()));
+                .orElseThrow(() -> new ConsultationNotFound(consultationDto.id()));
         TbUser tbUser = tbUserRepository.findById(consultationDto.createdBy())
-                .orElseThrow(() -> new RuntimeException("TbUser not found" + consultationDto.createdBy()));
+                .orElseThrow(() -> new UserNotFoundException(consultationDto.createdBy()));
 
         ConsultationStatus oldStatus = consultation.getConsultationStatus();
 
@@ -98,7 +98,7 @@ public class ConsultationService {
     public ConsultationDto updateStatus(UUID id, ConsultationDto consultationDto) {
 
         Consultation consultation = consultationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + consultationDto.id()));
+                .orElseThrow(() -> new ConsultationNotFound(consultationDto.id()));
 
         ConsultationStatus oldStatus = consultation.getConsultationStatus();
 
@@ -116,19 +116,20 @@ public class ConsultationService {
         return consultationMapping.toDto(savedConsultation);
     }
 
-    //  Delete
     public void delete(UUID id) {
+        boolean exists = consultationRepository.existsById(id);
+        if(!exists) {
+            throw new ConsultationNotFound(id);
+        }
         consultationRepository.deleteById(id);
     }
 
-    // List By ID
     public ConsultationDto findById(UUID id) {
         return consultationRepository.findById(id)
                 .map(consultationMapping::toDto)
-                .orElseThrow(() -> new RuntimeException("Consultation not found" + id));
+                .orElseThrow(() -> new ConsultationNotFound(id));
     }
 
-    //  List By Observation
     public List<ConsultationDto> findByObservation(String observation) {
         return consultationRepository.findByNoteContainingIgnoreCase(observation)
                 .stream() // Take the list one by one
@@ -136,7 +137,6 @@ public class ConsultationService {
                 .toList(); // List
     }
 
-    //  List by Doctor Name
     public List<ConsultationDto> findByDoctorName(String name) {
         return consultationRepository
                 .findByDoctorUserNameContainingIgnoreCase(name)
@@ -145,7 +145,6 @@ public class ConsultationService {
                 .toList(); // List
     }
 
-    //  List by Patient Name
     public List<ConsultationDto> findByPatientName(String name) {
         return consultationRepository
                 .findByPatientUserNameContainingIgnoreCase(name)

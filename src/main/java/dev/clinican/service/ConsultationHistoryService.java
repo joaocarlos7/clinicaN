@@ -1,12 +1,12 @@
 package dev.clinican.service;
 
 
-import dev.clinican.dto.ConsultationDto;
 import dev.clinican.dto.ConsultationHistoryDto;
 import dev.clinican.entity.Consultation;
 import dev.clinican.entity.ConsultationHistory;
 import dev.clinican.entity.TbUser;
 import dev.clinican.entity.enums.ConsultationStatus;
+import dev.clinican.exception.ConsultationNotFound;
 import dev.clinican.mapping.ConsultationHistoryMapping;
 import dev.clinican.repository.ConsultationHistoryRepository;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,7 @@ public class ConsultationHistoryService {
                 .stream()
                 .map(consultationHistoryMapping::toDto)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("ConsultationHistory not found" + id));
+                .orElseThrow(() -> new ConsultationNotFound(id));
     }
 
     public List<ConsultationHistoryDto> findByDoctorUserName(String name) {
