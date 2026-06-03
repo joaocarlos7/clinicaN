@@ -70,7 +70,8 @@ public class PatientService {
 
     // Delete
     public void delete(UUID id) {
-        if(!patientRepository.existsById(id)) {
+        boolean exists = patientRepository.existsById(id);
+        if(!exists) {
             throw new PatientNotFound(id);
         }
         patientRepository.deleteById(id);

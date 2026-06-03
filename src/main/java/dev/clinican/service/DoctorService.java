@@ -4,6 +4,7 @@ package dev.clinican.service;
 import dev.clinican.dto.DoctorDto;
 import dev.clinican.entity.Doctor;
 import dev.clinican.entity.TbUser;
+import dev.clinican.exception.CrmNotFound;
 import dev.clinican.exception.DoctorAlreadyExistsException;
 import dev.clinican.exception.DoctorNotFoundException;
 import dev.clinican.exception.UserNotFoundException;
@@ -66,30 +67,34 @@ public class DoctorService {
 }
     // Delete
     public void delete(UUID id) {
-    doctorRepository.deleteById(id);
+        boolean exists = doctorRepository.existsById(id);
+        if(!exists) {
+            throw new DoctorNotFoundException(id);
+        }
+        doctorRepository.deleteById(id);
 }
 
     // List By Doctor Id
     public DoctorDto findById(UUID id) {
     return doctorRepository.findById(id)
             .map(doctorMapping::toDto)
-            .orElseThrow(() -> new RuntimeException("Doctor not found" + id));
+            .orElseThrow(() -> new DoctorNotFoundException(id));
 }
 
     // List By Doctor Name
     public List<DoctorDto> findByDoctorName(String name) {
     return doctorRepository
             .findByUserNameContainingIgnoreCase(name)
-            .stream() // Take the list one by one
-            .map(doctorMapping::toDto)// Convert in Dto
-            .toList(); // List
+            .stream()
+            .map(doctorMapping::toDto)
+            .toList();
 }
 
     // List By Doctor CRM
     public DoctorDto findByCrm(Integer crm) {
     return doctorRepository.findByCrmContainingIgnoreCase(crm)
             .map(doctorMapping::toDto)
-            .orElseThrow(() -> new RuntimeException("CRM not found" + crm));
+            .orElseThrow(() -> new CrmNotFound(crm));
 }
 
 }
